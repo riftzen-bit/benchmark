@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useState } from "react";
-import { BENCHMARKS } from "@/lib/data/benchmarks";
 import type { BenchmarkCategory, BenchmarkRow } from "@/lib/schema/benchmark";
 import { CategoryFilter } from "./category-filter";
 import { ScoreCell } from "./score-cell";
@@ -21,13 +20,13 @@ const ALL_CATS: ReadonlyArray<"all" | BenchmarkCategory> = [
   "price",
 ];
 
-export function BenchmarkTable() {
+export function BenchmarkTable({ data }: { data: ReadonlyArray<BenchmarkRow> }) {
   const [cat, setCat] = useState<"all" | BenchmarkCategory>("all");
   const [sortKey, setSortKey] = useState<SortKey>("label");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const rows = useMemo(() => {
-    const filtered = cat === "all" ? BENCHMARKS : BENCHMARKS.filter((b) => b.category === cat);
+    const filtered = cat === "all" ? data : data.filter((b) => b.category === cat);
     const sorted = [...filtered].sort((a, b) => {
       const dir = sortDir === "asc" ? 1 : -1;
       if (sortKey === "label") return a.label.localeCompare(b.label) * dir;
@@ -38,7 +37,7 @@ export function BenchmarkTable() {
       return (da - db) * dir;
     });
     return sorted;
-  }, [cat, sortKey, sortDir]);
+  }, [data, cat, sortKey, sortDir]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortDir(sortDir === "asc" ? "desc" : "asc");

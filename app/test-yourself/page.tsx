@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function TestYourselfPage() {
   return (
-    <div className="mx-auto max-w-[1100px] px-6 py-16">
+    <div className="mx-auto max-w-[1200px] px-6 py-16">
       <header className="mb-12 max-w-[60ch]">
         <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
           Tự kiểm chứng

@@ -1,4 +1,5 @@
 import { BenchmarkTable } from "@/components/benchmark/benchmark-table";
+import { BENCHMARKS } from "@/lib/data/benchmarks";
 
 export const metadata = {
   title: "Benchmarks — Opus 4.7 vs GPT-5.5",
@@ -18,7 +19,7 @@ export default function BenchmarksPage() {
           tìm được số đáng tin cậy.
         </p>
       </header>
-      <BenchmarkTable />
+      <BenchmarkTable data={BENCHMARKS} />
     </div>
   );
 }

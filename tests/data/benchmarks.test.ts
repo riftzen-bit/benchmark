@@ -3,8 +3,8 @@ import { BENCHMARKS } from "@/lib/data/benchmarks";
 import { SOURCES, sourceById } from "@/lib/data/sources";
 
 describe("benchmarks dataset", () => {
-  it("loads without throwing (Zod validates) and has 20 rows", () => {
-    expect(BENCHMARKS.length).toBe(20);
+  it("loads without throwing (Zod validates) and has 22 rows", () => {
+    expect(BENCHMARKS.length).toBe(22);
   });
 
   it("every sourceId references a real source", () => {
