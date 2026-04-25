@@ -42,7 +42,7 @@ export const PlaygroundSchema = z.object({
   url: z.url(),
   cost: PlaygroundCost,
   models: z.string().min(1),
-  forModel: z.enum(["opus-4-7", "gpt-5-5", "both", "anonymous"]),
+  forModel: z.enum(["opus-4-7", "gpt-5-5", "gpt-5", "both", "anonymous"]),
   note: z.string().optional(),
 });
 export type Playground = z.infer<typeof PlaygroundSchema>;

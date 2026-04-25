@@ -7,7 +7,7 @@ import { PromptCard } from "@/components/prompt/prompt-card";
 import { PlaygroundGrid } from "@/components/prompt/playground-grid";
 
 export const metadata = {
-  title: "Run it — Opus 4.7 vs GPT-5.5",
+  title: "Run it. Opus 4.7 vs GPT-5.5",
 };
 
 export default function TestYourselfPage() {
@@ -31,7 +31,7 @@ export default function TestYourselfPage() {
           </p>
           <p className="mt-2 text-sm leading-relaxed">
             No fully free playground gives reliable access to both Opus 4.7 and GPT-5.5.
-            Arena&apos;s Battle Mode pairs anonymous models at random — you may need several
+            LMArena Battle Mode pairs anonymous models at random; you may need several
             refreshes. Claude Pro ($20/month) is the most reliable path to Opus 4.7.
             ChatGPT Plus ($20/month) for GPT-5.5. Pay-as-you-go API keys cost a few cents
             per prompt and need no subscription.

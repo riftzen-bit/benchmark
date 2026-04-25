@@ -8,16 +8,10 @@ import { ModelSpecGrid } from "@/components/home/model-spec-grid";
 import { fetchTrendingHFModels } from "@/lib/data/external/huggingface";
 import { listVisibleModels } from "@/lib/db/queries/models";
 import { listLeaderboard } from "@/lib/db/queries/leaderboard";
+import { vendorLabel } from "@/lib/data/vendors";
 
 export const metadata = { title: "Models" };
 export const dynamic = "force-dynamic";
-
-const VENDOR_LABEL: Record<string, string> = {
-  anthropic: "Anthropic",
-  openai: "OpenAI",
-  google: "Google",
-  meta: "Meta",
-};
 
 export default async function ModelsPage() {
   const [trending, dbModels, leaderboard] = await Promise.all([
@@ -120,7 +114,7 @@ export default async function ModelsPage() {
                       <p className="mono text-sm font-medium">{m.id}</p>
                     )}
                     <span className="mono text-[10px] uppercase tracking-widest text-[var(--mute)]">
-                      {VENDOR_LABEL[m.vendor] ?? m.vendor}
+                      {vendorLabel(m.vendor)}
                     </span>
                   </div>
                   <dl className="mono mt-4 grid grid-cols-3 gap-3 text-[11px] tabular-nums">

@@ -4,7 +4,7 @@ import { BenchmarkBoard } from "@/components/benchmark/benchmark-board";
 import { BENCHMARKS } from "@/lib/data/benchmarks";
 
 export const metadata = {
-  title: "Benchmarks — Opus 4.7 vs GPT-5.5",
+  title: "Benchmarks. Opus 4.7 vs GPT-5.5",
 };
 
 export default function BenchmarksPage() {

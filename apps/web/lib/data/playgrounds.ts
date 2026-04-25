@@ -3,12 +3,12 @@ import { PlaygroundSchema, type Playground } from "@/lib/schema/prompt";
 const raw: Playground[] = [
   {
     id: "arena-battle",
-    label: "Arena (Battle Mode)",
-    url: "https://arena.ai/",
+    label: "LMArena (Battle Mode)",
+    url: "https://lmarena.ai/",
     cost: "free-no-account",
-    models: "Random anonymous pairing — both models may appear if voted in",
+    models: "Random anonymous pairing. Both flagship models may appear if voted in",
     forModel: "anonymous",
-    note: "Formerly LMArena. Free, no signup. You don't pick the models — Battle Mode pairs two anonymous models and you vote which response was better. Refresh until you draw Opus 4.7 or GPT-5.5.",
+    note: "Free, no signup. Battle Mode pairs two anonymous models and you vote which response was better. Refresh until you draw Opus 4.7 or GPT-5.5.",
   },
   {
     id: "claude-pro",
@@ -26,7 +26,7 @@ const raw: Playground[] = [
     cost: "pay-as-you-go",
     models: "Claude Opus 4.7 ($5 / $25 per Mtok)",
     forModel: "opus-4-7",
-    note: "Direct API workbench. Pay per token, no subscription. Cheapest way to test Opus 4.7 occasionally — costs a few cents per prompt.",
+    note: "Direct API workbench. Pay per token, no subscription. Cheapest way to test Opus 4.7 occasionally. Costs a few cents per prompt.",
   },
   {
     id: "chatgpt-plus",
@@ -53,7 +53,7 @@ const raw: Playground[] = [
     cost: "free-no-account",
     models: "Claude 3.5 Haiku, GPT-4o mini (older models only)",
     forModel: "both",
-    note: "DuckDuckGo's free anonymous chat. Useful for orientation but does NOT include Opus 4.7 or GPT-5.5 in the free tier — only older versions. Subscription unlocks GPT-5 and Sonnet 4 (still not 4.7 / 5.5).",
+    note: "DuckDuckGo anonymous chat. Useful for orientation but does NOT include Opus 4.7 or GPT-5.5 in the free tier. Older versions only.",
   },
   {
     id: "poe",
@@ -62,7 +62,7 @@ const raw: Playground[] = [
     cost: "subscription",
     models: "Claude Opus 4.7 + GPT-5.5 (Poe subscription)",
     forModel: "both",
-    note: "Quora's chat aggregator. Subscription gives both top-tier models in one interface — convenient if you only want to subscribe to one service.",
+    note: "Quora chat aggregator. Subscription gives both top-tier models in one interface. Convenient if you only want to subscribe to one service.",
   },
 ];
 

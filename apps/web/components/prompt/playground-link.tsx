@@ -12,7 +12,7 @@ const COST_SHORT: Record<string, string> = {
 export function PlaygroundLink({ p }: { p: Playground }) {
   const costLabel = COST_SHORT[p.cost] ?? p.cost;
   const showOpus = p.forModel === "opus-4-7" || p.forModel === "both";
-  const showGpt = p.forModel === "gpt-5-5" || p.forModel === "both";
+  const showGpt = p.forModel === "gpt-5-5" || p.forModel === "gpt-5" || p.forModel === "both";
 
   return (
     <a

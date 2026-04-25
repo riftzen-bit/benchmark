@@ -8,7 +8,7 @@ import { ModelSpecGrid } from "@/components/home/model-spec-grid";
 import { BENCHMARKS } from "@/lib/data/benchmarks";
 
 export const metadata = {
-  title: "Head-to-head — Opus 4.7 vs GPT-5.5",
+  title: "Head-to-head. Opus 4.7 vs GPT-5.5",
 };
 
 export default function ComparePage() {
