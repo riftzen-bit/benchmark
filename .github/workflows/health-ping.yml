@@ -1,0 +1,16 @@
+name: health-ping
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/health
+        run: |
+          if [ -z "${{ secrets.HEALTH_URL }}" ]; then
+            echo "HEALTH_URL secret not set; skipping" >&2
+            exit 0
+          fi
+          curl -fsSL "${{ secrets.HEALTH_URL }}"
