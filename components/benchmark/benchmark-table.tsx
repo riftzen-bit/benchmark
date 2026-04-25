@@ -14,7 +14,6 @@ const ALL_CATS: ReadonlyArray<"all" | BenchmarkCategory> = [
   "all",
   "coding",
   "reasoning",
-  "math",
   "agent",
   "vision",
   "multilingual",
@@ -96,8 +95,10 @@ function Th({
   dir: SortDir;
   numeric?: boolean;
 }) {
+  const ariaSort = active ? (dir === "asc" ? "ascending" : "descending") : "none";
   return (
     <th
+      aria-sort={ariaSort}
       className={`mono py-3 text-xs uppercase tracking-widest ${
         numeric ? "pr-2 text-right" : "pl-0"
       }`}
@@ -105,6 +106,7 @@ function Th({
       <button
         type="button"
         onClick={onClick}
+        aria-label={active ? `Sắp xếp theo ${typeof children === "string" ? children : ""}, ${dir === "asc" ? "tăng dần" : "giảm dần"}` : undefined}
         className={`hover:text-[var(--foreground)] ${
           active ? "text-[var(--foreground)]" : "text-[var(--mute)]"
         }`}
