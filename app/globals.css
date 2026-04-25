@@ -69,6 +69,7 @@ html, body {
 }
 
 .mono { font-family: var(--font-mono); }
+.display { font-family: var(--font-sans); letter-spacing: -0.02em; }
 
 /* Big tabular figure used on hero / leaderboard headers */
 .figure {
