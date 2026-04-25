@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-sans-loaded), "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-loaded), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   --color-paper: #FAFAF7;
   --color-ink: #0A0A0A;
@@ -33,7 +33,7 @@
   --foreground: #F0EDE6;
   --rule: #2A2824;
   --mute: #8C8780;
-  --accent: #E07a3a;
+  --accent: #E07A3A;
 }
 
 * { border-color: var(--rule); }
