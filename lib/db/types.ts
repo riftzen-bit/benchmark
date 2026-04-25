@@ -149,7 +149,22 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: {
+      run_vote_tally: {
+        Row: { run_id: string; up: number; down: number; score: number };
+        Relationships: [];
+      };
+      model_category_leaderboard: {
+        Row: {
+          model_id: string;
+          category: string;
+          runs: number;
+          avg_score: number | null;
+          last_run_at: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: Record<string, never>;
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
