@@ -20,9 +20,10 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => setCopied(false), 1500);
     } catch {
-      /* clipboard might be blocked; user falls back to manual selection */
+      /* clipboard may be blocked; user can select manually */
     }
   }
+
   return (
     <button
       type="button"

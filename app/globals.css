@@ -6,18 +6,27 @@
 @theme {
   --font-sans: var(--font-sans-loaded), "Inter Tight", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-loaded), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: var(--font-display-loaded), "Fraunces", Georgia, serif;
 
-  --color-paper: #FAFAF7;
-  --color-ink: #0A0A0A;
-  --color-rule: #E5E2DA;
-  --color-mute: #6B6863;
-  --color-accent: #C2410C;
-  --color-opus: #0A0A0A;
-  --color-gpt: #6B6863;
+  --color-paper: #F4F1EA;
+  --color-ink: #14110D;
+  --color-rule: #DCD7CB;
+  --color-mute: #6F6A60;
+  --color-accent: #B14F2E;
+  --color-opus: #B14F2E;
+  --color-gpt: #2E5C66;
+  --color-tie: #8B7E5A;
 
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 6px;
+
+  --animate-ticker: ticker 60s linear infinite;
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 :root {
@@ -26,14 +35,20 @@
   --rule: var(--color-rule);
   --mute: var(--color-mute);
   --accent: var(--color-accent);
+  --opus: var(--color-opus);
+  --gpt: var(--color-gpt);
+  --tie: var(--color-tie);
 }
 
 .dark {
-  --background: #0E0D0B;
-  --foreground: #F0EDE6;
-  --rule: #2A2824;
-  --mute: #8C8780;
-  --accent: #E07A3A;
+  --background: #15130F;
+  --foreground: #F2EEE5;
+  --rule: #2F2C26;
+  --mute: #8C857A;
+  --accent: #E07A4B;
+  --opus: #E07A4B;
+  --gpt: #5C9BA6;
+  --tie: #B8A56F;
 }
 
 * { border-color: var(--rule); }
@@ -52,8 +67,29 @@ html, body {
 }
 
 .mono { font-family: var(--font-mono); }
+.display { font-family: var(--font-display); font-feature-settings: "ss01" 1, "ss03" 1; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.hairline { background-color: var(--rule); }
 
 :where(a, button, [role="button"]):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[ticker_60s_linear_infinite\],
+  .animate-ticker {
+    animation: none !important;
+  }
 }

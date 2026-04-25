@@ -1,4 +1,6 @@
-import { BenchmarkTable } from "@/components/benchmark/benchmark-table";
+import { Container } from "@/components/shared/container";
+import { Eyebrow } from "@/components/shared/eyebrow";
+import { BenchmarkBoard } from "@/components/benchmark/benchmark-board";
 import { BENCHMARKS } from "@/lib/data/benchmarks";
 
 export const metadata = {
@@ -7,20 +9,20 @@ export const metadata = {
 
 export default function BenchmarksPage() {
   return (
-    <div className="mx-auto max-w-[1200px] px-6 py-16">
-      <header className="mb-10 max-w-[65ch]">
-        <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-          Comparison table
-        </p>
-        <h1 className="mt-3 text-4xl font-medium tracking-tight">All {BENCHMARKS.length} benchmarks</h1>
-        <p className="mt-4 text-base leading-relaxed text-[var(--mute)]">
-          Each numeric cell carries a superscript citation that links to the source. Click
-          any column header to sort. Filter by category. <span className="mono">n/a</span>
-          {" "}means the vendor has not published a number, or no reliable third-party figure
-          was found.
+    <Container width="wide" className="py-16 md:py-20">
+      <header className="mb-10">
+        <Eyebrow>The Tape · Issue 04.25</Eyebrow>
+        <h1 className="display mt-4 text-4xl tracking-tight md:text-5xl">
+          All {BENCHMARKS.length} benchmarks, side by side
+        </h1>
+        <p className="mt-4 max-w-[65ch] leading-relaxed text-[var(--mute)]">
+          Every cell carries a superscript citation linking to the primary source. Click
+          column headers to sort. Filter by category using the chips below.{" "}
+          <span className="mono">n/a</span> means the vendor has not published a number,
+          or no reliable third-party figure was found.
         </p>
       </header>
-      <BenchmarkTable data={BENCHMARKS} />
-    </div>
+      <BenchmarkBoard data={BENCHMARKS} />
+    </Container>
   );
 }

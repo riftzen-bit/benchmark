@@ -2,46 +2,35 @@ import type { Prompt } from "@/lib/schema/prompt";
 import { playgroundById } from "@/lib/data/playgrounds";
 import { CopyButton } from "./copy-button";
 import { PlaygroundLink } from "./playground-link";
+import { PromptMeta } from "./prompt-meta";
+import { PromptBody } from "./prompt-body";
+import { WatchList } from "./watch-list";
+import { Eyebrow } from "@/components/shared/eyebrow";
 
 export function PromptCard({ prompt }: { prompt: Prompt }) {
   return (
-    <article className="border-t border-[var(--rule)] py-8">
-      <header className="flex flex-wrap items-baseline justify-between gap-3">
-        <div>
-          <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-            {prompt.category} · {prompt.difficulty}
-          </p>
-          <h3 className="mt-2 text-xl font-medium tracking-tight">{prompt.title}</h3>
-        </div>
+    <article className="border-t border-[var(--rule)] py-10">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <PromptMeta category={prompt.category} difficulty={prompt.difficulty} />
         <CopyButton text={prompt.body} />
-      </header>
+      </div>
 
-      <pre className="mono mt-5 max-h-80 overflow-auto whitespace-pre-wrap break-words border border-[var(--rule)] bg-[var(--background)] p-4 text-sm leading-relaxed">
-        {prompt.body}
-      </pre>
+      <h3 className="display mt-4 text-2xl tracking-tight md:text-3xl">{prompt.title}</h3>
 
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <div className="mt-5">
+        <PromptBody>{prompt.body}</PromptBody>
+      </div>
+
+      <div className="mt-8 grid gap-6 md:grid-cols-[7fr_5fr]">
+        <WatchList items={prompt.watchFor} />
+
         <div>
-          <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-            What to look for
-          </p>
-          <ul className="mt-3 space-y-1.5 text-sm">
-            {prompt.watchFor.map((w, i) => (
-              <li key={`${prompt.id}-${i}`} className="text-[var(--mute)]">
-                <span className="text-[var(--foreground)]">·</span> {w}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div>
-          <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-            Open in
-          </p>
+          <Eyebrow>Open in</Eyebrow>
           <div className="mt-3 flex flex-wrap gap-2">
             {prompt.playgroundIds.map((id) => {
-              const p = playgroundById(id);
-              if (!p) return null;
-              return <PlaygroundLink key={id} p={p} />;
+              const pg = playgroundById(id);
+              if (!pg) return null;
+              return <PlaygroundLink key={id} p={pg} />;
             })}
           </div>
         </div>

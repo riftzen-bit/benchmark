@@ -1,15 +1,19 @@
 import { ExternalLink } from "lucide-react";
-import type { Playground, PlaygroundCost } from "@/lib/schema/prompt";
+import type { Playground } from "@/lib/schema/prompt";
+import { ModelDot } from "@/components/shared/model-mark";
 
-const COST_LABEL: Record<PlaygroundCost, { text: string; tone: "free" | "neutral" }> = {
-  "free-no-account": { text: "Free, no account", tone: "free" },
-  "free-with-account": { text: "Free, signup required", tone: "neutral" },
-  subscription: { text: "Subscription", tone: "neutral" },
-  "pay-as-you-go": { text: "Pay per token", tone: "neutral" },
+const COST_SHORT: Record<string, string> = {
+  "free-no-account": "Free",
+  "free-with-account": "Free, signup",
+  subscription: "Sub",
+  "pay-as-you-go": "Pay/token",
 };
 
 export function PlaygroundLink({ p }: { p: Playground }) {
-  const cost = COST_LABEL[p.cost];
+  const costLabel = COST_SHORT[p.cost] ?? p.cost;
+  const showOpus = p.forModel === "opus-4-7" || p.forModel === "both";
+  const showGpt = p.forModel === "gpt-5-5" || p.forModel === "both";
+
   return (
     <a
       href={p.url}
@@ -18,14 +22,16 @@ export function PlaygroundLink({ p }: { p: Playground }) {
       className="group inline-flex items-center gap-2 border border-[var(--rule)] bg-[var(--background)] px-3 py-2 text-sm transition-colors hover:border-[var(--foreground)] hover:bg-[var(--rule)]"
       title={p.note}
     >
+      {showOpus && <ModelDot model="opus" />}
+      {showGpt && <ModelDot model="gpt" />}
       <span className="font-medium">{p.label}</span>
       <ExternalLink className="h-3.5 w-3.5 text-[var(--mute)] group-hover:text-[var(--foreground)]" />
       <span
-        className={`mono ml-1 text-[10px] uppercase tracking-widest ${
-          cost.tone === "free" ? "text-[var(--accent)]" : "text-[var(--mute)]"
+        className={`mono text-[10px] uppercase tracking-widest ${
+          p.cost === "free-no-account" ? "text-[var(--accent)]" : "text-[var(--mute)]"
         }`}
       >
-        {cost.text}
+        {costLabel}
       </span>
     </a>
   );

@@ -1,21 +1,36 @@
-import { formatScore } from "@/lib/utils/fmt";
-import type { Unit } from "@/lib/utils/fmt";
+import { cn } from "@/lib/utils";
+import type { ModelKey } from "@/lib/config/site";
+import { formatScore, type Unit } from "@/lib/utils/fmt";
 
 interface Props {
   value: number | null;
   max: number;
   unit: Unit;
-  variant: "opus" | "gpt";
+  side: ModelKey;
   winner: boolean;
+  showLabel?: boolean;
+  className?: string;
 }
 
-export function ScoreBar({ value, max, unit, variant, winner }: Props) {
+const FILL: Record<ModelKey, string> = {
+  opus: "bg-[var(--opus)]",
+  gpt: "bg-[var(--gpt)]",
+};
+
+export function ScoreBar({
+  value,
+  max,
+  unit,
+  side,
+  winner,
+  showLabel = true,
+  className,
+}: Props) {
   const safeMax = max > 0 ? max : 1;
   const pct = value === null ? 0 : Math.min(100, (value / safeMax) * 100);
-  const fill = variant === "opus" ? "bg-[var(--foreground)]" : "bg-[var(--mute)]";
-  const label = `${variant === "opus" ? "Claude Opus 4.7" : "GPT-5.5"}: ${formatScore(value, unit)}`;
+  const label = `${side === "opus" ? "Claude Opus 4.7" : "GPT-5.5"}: ${formatScore(value, unit)}`;
   return (
-    <div className="flex items-center gap-3">
+    <div className={cn("flex items-center gap-3", className)}>
       <div
         role="meter"
         aria-valuenow={value ?? 0}
@@ -25,18 +40,26 @@ export function ScoreBar({ value, max, unit, variant, winner }: Props) {
         className="relative h-1.5 flex-1 bg-[var(--rule)]"
       >
         <div
-          aria-hidden="true"
-          className={`h-full ${fill} transition-[width] duration-500`}
+          aria-hidden
+          className={cn(
+            "h-full transition-[width] duration-500",
+            FILL[side],
+            value === null && "opacity-30",
+          )}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span
-        className={`mono w-20 text-right text-sm tnum ${
-          winner ? "text-[var(--accent)] font-medium" : ""
-        }`}
-      >
-        {formatScore(value, unit)}
-      </span>
+      {showLabel ? (
+        <span
+          className={cn(
+            "mono w-20 shrink-0 text-right text-sm tnum",
+            winner && (side === "opus" ? "text-[var(--opus)]" : "text-[var(--gpt)]") + " font-medium",
+            value === null && "text-[var(--mute)]",
+          )}
+        >
+          {formatScore(value, unit)}
+        </span>
+      ) : null}
     </div>
   );
 }
