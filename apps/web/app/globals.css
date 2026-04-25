@@ -7,11 +7,11 @@
   --font-sans: var(--font-sans-loaded), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-loaded), ui-monospace, "JetBrains Mono", SFMono-Regular, monospace;
 
-  --color-paper: #F7F7F5;
-  --color-ink: #0B0B0C;
-  --color-rule: #DCDCD8;
-  --color-mute: #6E6E70;
-  --color-accent: #E2562C;
+  --color-paper: #F1F0EB;
+  --color-ink: #0A0A0B;
+  --color-rule: #C7C6C0;
+  --color-mute: #5C5C60;
+  --color-accent: #FF2E1F;
   --color-pos: #1E7F3D;
   --color-neg: #B43325;
   --color-opus: #C75A2C;
@@ -48,13 +48,13 @@
 }
 
 :root {
-  --paper: #F7F7F5;
-  --ink: #0B0B0C;
+  --paper: #F1F0EB;
+  --ink: #0A0A0B;
   --background: var(--paper);
   --foreground: var(--ink);
-  --rule: #DCDCD8;
-  --mute: #6E6E70;
-  --accent: #E2562C;
+  --rule: #C7C6C0;
+  --mute: #5C5C60;
+  --accent: #FF2E1F;
   --pos: #1E7F3D;
   --neg: #B43325;
   --opus: #C75A2C;
@@ -63,13 +63,13 @@
 }
 
 .dark {
-  --paper: #0A0A0B;
-  --ink: #F2F2EE;
+  --paper: #07070A;
+  --ink: #EDEDE9;
   --background: var(--paper);
   --foreground: var(--ink);
-  --rule: #2E2E33;
-  --mute: #9A9A9A;
-  --accent: #FF7E47;
+  --rule: #232328;
+  --mute: #8E8E93;
+  --accent: #FF5A4A;
   --pos: #4CAF6B;
   --neg: #E5644F;
   --opus: #FF8E5A;

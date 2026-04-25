@@ -5,6 +5,22 @@ Next.js 15 + Supabase platform where the community submits real benchmark runs
 from a static-data comparison into an authenticated platform — see
 `docs/superpowers/specs/2026-04-25-community-rebuild-master.md`.
 
+## Repo layout (workspace)
+
+```
+benchmark/
+  package.json           # bun workspace root, forwards scripts to apps/web
+  bun.lock
+  .github/workflows/     # GH Actions (must live at repo root)
+  docs/superpowers/      # specs + plans
+  apps/
+    web/                 # Next.js 15 app (this is the deployed site)
+      package.json       # @benchmark/web
+      app/  components/  lib/  supabase/  scripts/  tests/
+```
+
+Future Windows app will live alongside under `apps/desktop/` (or similar).
+
 ## Stack
 
 - Next.js 15 (App Router, Server Actions, RSC)
@@ -34,17 +50,19 @@ from a static-data comparison into an authenticated platform — see
 4. Optional: enable Google OAuth in Supabase → Auth → Providers, and add a
    redirect URL `http://localhost:3000/auth/callback` (plus your prod URL).
 
-## Run
+## Run (from repo root)
 
 ```bash
 bun install
-bun run dev          # http://localhost:3000
+bun run dev          # http://localhost:3000  (proxies to apps/web via workspace filter)
 bun run typecheck
 bun run lint
 bun run test
 bun run guard        # forbids SUPABASE_SERVICE_ROLE_KEY outside server-only allowlist
 bun run build
 ```
+
+Or work directly in the web package: `cd apps/web && bun run dev`.
 
 ## Layout
 

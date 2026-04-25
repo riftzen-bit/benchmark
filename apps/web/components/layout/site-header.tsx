@@ -2,11 +2,13 @@ import { Brand } from "./brand";
 import { Nav, NavMobile } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
 import { AuthMenu } from "./auth-menu";
+import { ReleaseTape } from "./release-tape";
 import { Container } from "@/components/shared/container";
 
 export async function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--rule)] bg-[var(--background)]/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[var(--rule)] bg-[var(--background)]/90 backdrop-blur">
+      <ReleaseTape />
       <Container width="wide">
         <div className="flex h-14 items-center justify-between">
           <Brand />
