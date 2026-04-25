@@ -29,10 +29,10 @@ export const BenchmarkRowSchema = z.object({
 export type BenchmarkRow = z.infer<typeof BenchmarkRowSchema>;
 
 export const SourceSchema = z.object({
-  id: z.string(),
-  label: z.string(),
+  id: z.string().min(1),
+  label: z.string().min(1),
   url: z.url(),
-  publisher: z.string(),
+  publisher: z.string().min(1),
   capturedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 export type Source = z.infer<typeof SourceSchema>;
