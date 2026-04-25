@@ -26,6 +26,9 @@ describe("formatDelta", () => {
   it("renders 0.0 for tie", () => {
     expect(formatDelta(0)).toBe("0.0");
   });
+  it("renders 0.0 (no negative zero) for small negative deltas", () => {
+    expect(formatDelta(-0.04)).toBe("0.0");
+  });
 });
 
 describe("formatPrice", () => {

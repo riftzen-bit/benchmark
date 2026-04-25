@@ -20,9 +20,10 @@ export function formatScore(value: number | null, unit: Unit): string {
 
 export function formatDelta(delta: number | null): string {
   if (delta === null) return "—";
-  if (delta === 0) return "0.0";
+  const formatted = delta.toFixed(1);
+  if (formatted === "0.0" || formatted === "-0.0") return "0.0";
   const sign = delta > 0 ? "+" : "";
-  return `${sign}${delta.toFixed(1)}`;
+  return `${sign}${formatted}`;
 }
 
 export function formatPrice(perMtok: number): string {
