@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
 
 const sans = Inter_Tight({
   subsets: ["latin", "vietnamese"],
@@ -25,7 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="vi" suppressHydrationWarning className={`${sans.variable} ${mono.variable}`}>
       <body className="min-h-screen antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+          <Header />
+          <main className="min-h-[calc(100vh-3.5rem)]">{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
