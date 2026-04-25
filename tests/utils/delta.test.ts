@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { winnerOf, deltaOf } from "@/lib/utils/delta";
+import { winnerOf, deltaOf, signedAdvantage } from "@/lib/utils/delta";
 
 describe("winnerOf", () => {
   it("returns 'opus' when opus higher and higher is better", () => {
@@ -26,5 +26,22 @@ describe("deltaOf", () => {
   it("returns null if either side missing", () => {
     expect(deltaOf(null, 80)).toBeNull();
     expect(deltaOf(80, null)).toBeNull();
+  });
+});
+
+describe("signedAdvantage", () => {
+  it("returns 0 when either side is null", () => {
+    expect(signedAdvantage({ opus: null, gpt: 80, higherIsBetter: true })).toBe(0);
+    expect(signedAdvantage({ opus: 80, gpt: null, higherIsBetter: true })).toBe(0);
+  });
+  it("returns positive when Opus leads on a higher-is-better metric", () => {
+    expect(signedAdvantage({ opus: 90, gpt: 80, higherIsBetter: true })).toBe(10);
+  });
+  it("returns negative when GPT leads on a higher-is-better metric", () => {
+    expect(signedAdvantage({ opus: 70, gpt: 80, higherIsBetter: true })).toBe(-10);
+  });
+  it("inverts sign when higher is worse (e.g. price)", () => {
+    expect(signedAdvantage({ opus: 25, gpt: 30, higherIsBetter: false })).toBe(5);
+    expect(signedAdvantage({ opus: 30, gpt: 25, higherIsBetter: false })).toBe(-5);
   });
 });

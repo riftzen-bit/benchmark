@@ -7,23 +7,32 @@
   --font-sans: var(--font-sans-loaded), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-loaded), ui-monospace, "JetBrains Mono", SFMono-Regular, monospace;
 
-  /* Stark neutrals + one bright accent. No warm-paper, no serif display. */
   --color-paper: #F7F7F5;
   --color-ink: #0B0B0C;
   --color-rule: #DCDCD8;
   --color-mute: #6E6E70;
-  --color-accent: #E2562C;       /* signal — used sparingly */
+  --color-accent: #E2562C;
   --color-pos: #1E7F3D;
   --color-neg: #B43325;
+  --color-opus: #C75A2C;
+  --color-gpt: #16604F;
+  --color-tie: #6E6E70;
 
   --radius-xs: 0;
   --radius-sm: 0;
   --radius-md: 2px;
 
   --animate-ticker: ticker 60s linear infinite;
+  --animate-marquee-slow: marquee 80s linear infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
 }
 
 @keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
 }
@@ -33,24 +42,39 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
 :root {
-  --background: var(--color-paper);
-  --foreground: var(--color-ink);
-  --rule: var(--color-rule);
-  --mute: var(--color-mute);
-  --accent: var(--color-accent);
-  --pos: var(--color-pos);
-  --neg: var(--color-neg);
+  --paper: #F7F7F5;
+  --ink: #0B0B0C;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --rule: #DCDCD8;
+  --mute: #6E6E70;
+  --accent: #E2562C;
+  --pos: #1E7F3D;
+  --neg: #B43325;
+  --opus: #C75A2C;
+  --gpt: #16604F;
+  --tie: #6E6E70;
 }
 
 .dark {
-  --background: #0A0A0B;
-  --foreground: #F2F2EE;
-  --rule: #25252A;
-  --mute: #888888;
+  --paper: #0A0A0B;
+  --ink: #F2F2EE;
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --rule: #2E2E33;
+  --mute: #9A9A9A;
   --accent: #FF7E47;
   --pos: #4CAF6B;
   --neg: #E5644F;
+  --opus: #FF8E5A;
+  --gpt: #4FC3A8;
+  --tie: #888888;
 }
 
 * { border-color: var(--rule); }
@@ -71,7 +95,6 @@ html, body {
 .mono { font-family: var(--font-mono); }
 .display { font-family: var(--font-sans); letter-spacing: -0.02em; }
 
-/* Big tabular figure used on hero / leaderboard headers */
 .figure {
   font-family: var(--font-sans);
   font-feature-settings: "tnum" 1, "lnum" 1, "ss01" 1;
@@ -94,6 +117,23 @@ html, body {
   animation: fade-up 360ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }
 
+.fade-up-delay-1 { animation-delay: 80ms; }
+.fade-up-delay-2 { animation-delay: 160ms; }
+.fade-up-delay-3 { animation-delay: 240ms; }
+
+.grid-paper {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--rule) 60%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--rule) 60%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+.dot-paper {
+  background-image: radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--rule) 80%, transparent) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+
 :where(a, button, [role="button"]):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -105,6 +145,8 @@ html, body {
 @media (prefers-reduced-motion: reduce) {
   .animate-\[ticker_60s_linear_infinite\],
   .animate-ticker,
+  .animate-marquee-slow,
+  .animate-pulse-soft,
   .fade-up {
     animation: none !important;
   }

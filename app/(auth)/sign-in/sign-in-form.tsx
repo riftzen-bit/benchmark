@@ -1,45 +1,42 @@
 "use client";
 import { useActionState } from "react";
-import { signInAction, signInWithGoogleAction } from "@/lib/auth/actions";
+import { signInAction } from "@/lib/auth/actions";
+import { AuthInput } from "@/components/auth/auth-input";
 
 export function SignInForm() {
   const [state, formAction, pending] = useActionState(signInAction, null);
   return (
-    <form action={formAction} className="grid gap-3">
-      <label className="grid gap-1 text-sm">
-        Email
-        <input
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          className="border border-[var(--rule)] bg-transparent px-2 py-1.5"
-        />
-      </label>
-      <label className="grid gap-1 text-sm">
-        Password
-        <input
-          name="password"
-          type="password"
-          required
-          minLength={1}
-          autoComplete="current-password"
-          className="border border-[var(--rule)] bg-transparent px-2 py-1.5"
-        />
-      </label>
-      {state && !state.ok && <p className="text-sm text-red-600">{state.error}</p>}
+    <form action={formAction} className="grid gap-4">
+      <AuthInput
+        label="Email"
+        name="email"
+        type="email"
+        required
+        autoComplete="email"
+        placeholder="you@domain.com"
+      />
+      <AuthInput
+        label="Password"
+        name="password"
+        type="password"
+        required
+        minLength={1}
+        autoComplete="current-password"
+        placeholder="••••••••"
+      />
+      {state && !state.ok && (
+        <p
+          role="alert"
+          className="border-l-2 border-[var(--neg)] bg-[var(--neg)]/8 px-3 py-2 text-sm text-[var(--neg)]"
+        >
+          {state.error}
+        </p>
+      )}
       <button
         disabled={pending}
-        className="border border-[var(--ink)] bg-[var(--ink)] px-3 py-1.5 text-[var(--paper)] disabled:opacity-50"
+        className="mt-2 inline-flex items-center justify-center border border-[var(--ink)] bg-[var(--ink)] px-4 py-2.5 text-sm font-medium text-[var(--paper)] transition-colors hover:bg-transparent hover:text-[var(--ink)] disabled:opacity-50"
       >
-        {pending ? "Signing in…" : "Sign in"}
-      </button>
-      <button
-        type="button"
-        formAction={signInWithGoogleAction}
-        className="mono border border-[var(--rule)] px-3 py-1.5 text-xs uppercase tracking-widest"
-      >
-        Continue with Google
+        {pending ? "Signing in…" : "Sign in →"}
       </button>
     </form>
   );

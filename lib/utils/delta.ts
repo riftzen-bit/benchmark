@@ -18,3 +18,15 @@ export function deltaOf(opus: number | null, gpt: number | null): number | null 
   if (opus === null || gpt === null) return null;
   return opus - gpt;
 }
+
+export interface AdvantageInput {
+  opus: number | null;
+  gpt: number | null;
+  higherIsBetter: boolean;
+}
+
+export function signedAdvantage(row: AdvantageInput): number {
+  if (row.opus === null || row.gpt === null) return 0;
+  const raw = row.opus - row.gpt;
+  return row.higherIsBetter ? raw : -raw;
+}

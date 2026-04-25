@@ -1,45 +1,56 @@
 "use client";
 import { useActionState } from "react";
 import { signUpAction } from "@/lib/auth/actions";
+import { AuthInput } from "@/components/auth/auth-input";
 
 export function SignUpForm() {
   const [state, formAction, pending] = useActionState(signUpAction, null);
   if (state?.ok) {
     return (
-      <p className="text-sm">
+      <div
+        role="status"
+        className="border border-[var(--pos)]/40 bg-[var(--pos)]/8 px-4 py-3 text-sm leading-relaxed text-[var(--foreground)]"
+      >
+        <p className="mono mb-1 text-[10px] uppercase tracking-widest text-[var(--pos)]">
+          Confirmation sent
+        </p>
         Check your inbox for a confirmation link to finish creating your account.
-      </p>
+      </div>
     );
   }
   return (
-    <form action={formAction} className="grid gap-3">
-      <label className="grid gap-1 text-sm">
-        Email
-        <input
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          className="border border-[var(--rule)] bg-transparent px-2 py-1.5"
-        />
-      </label>
-      <label className="grid gap-1 text-sm">
-        Password (min 8 chars)
-        <input
-          name="password"
-          type="password"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          className="border border-[var(--rule)] bg-transparent px-2 py-1.5"
-        />
-      </label>
-      {state && !state.ok && <p className="text-sm text-red-600">{state.error}</p>}
+    <form action={formAction} className="grid gap-4">
+      <AuthInput
+        label="Email"
+        name="email"
+        type="email"
+        required
+        autoComplete="email"
+        placeholder="you@domain.com"
+      />
+      <AuthInput
+        label="Password"
+        name="password"
+        type="password"
+        required
+        minLength={8}
+        autoComplete="new-password"
+        placeholder="min 8 chars"
+        hint="At least 8 characters. We salt &amp; hash, never store plaintext."
+      />
+      {state && !state.ok && (
+        <p
+          role="alert"
+          className="border-l-2 border-[var(--neg)] bg-[var(--neg)]/8 px-3 py-2 text-sm text-[var(--neg)]"
+        >
+          {state.error}
+        </p>
+      )}
       <button
         disabled={pending}
-        className="border border-[var(--ink)] bg-[var(--ink)] px-3 py-1.5 text-[var(--paper)] disabled:opacity-50"
+        className="mt-2 inline-flex items-center justify-center border border-[var(--ink)] bg-[var(--ink)] px-4 py-2.5 text-sm font-medium text-[var(--paper)] transition-colors hover:bg-transparent hover:text-[var(--ink)] disabled:opacity-50"
       >
-        {pending ? "Creating…" : "Create account"}
+        {pending ? "Creating…" : "Create account →"}
       </button>
     </form>
   );
