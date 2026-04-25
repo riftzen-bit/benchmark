@@ -214,7 +214,7 @@ const raw: BenchmarkRow[] = [
 ];
 
 export const BENCHMARKS: ReadonlyArray<BenchmarkRow> = Object.freeze(
-  raw.map((r) => BenchmarkRowSchema.parse(r)),
+  raw.map((r) => Object.freeze(BenchmarkRowSchema.parse(r))),
 );
 
 export function benchmarksByCategory(

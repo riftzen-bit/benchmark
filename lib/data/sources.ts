@@ -60,7 +60,7 @@ const raw: Source[] = [
 ];
 
 export const SOURCES: ReadonlyArray<Source> = Object.freeze(
-  raw.map((s) => SourceSchema.parse(s)),
+  raw.map((s) => Object.freeze(SourceSchema.parse(s))),
 );
 
 export function sourceById(id: string): Source | undefined {
