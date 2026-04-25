@@ -190,6 +190,18 @@ const raw: BenchmarkRow[] = [
     higherIsBetter: true,
   },
   {
+    id: "lmarena-elo",
+    label: "LMArena Elo (overall)",
+    category: "reasoning",
+    opus: 1504,
+    gpt: null,
+    unit: "elo",
+    sourceIds: ["lmarena-snapshot"],
+    capturedAt: "2026-04-25",
+    higherIsBetter: true,
+    note: "GPT-5.5 chưa có đủ vote trên LMArena (mới phát hành 2026-04-23).",
+  },
+  {
     id: "input-price",
     label: "Input price",
     category: "price",

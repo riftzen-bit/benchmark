@@ -57,6 +57,13 @@ const raw: Source[] = [
     publisher: "Apiyi",
     capturedAt: "2026-04-25",
   },
+  {
+    id: "lmarena-snapshot",
+    label: "LMArena Leaderboard (snapshot)",
+    url: "https://lmarena.ai/leaderboard",
+    publisher: "LMArena",
+    capturedAt: "2026-04-25",
+  },
 ];
 
 export const SOURCES: ReadonlyArray<Source> = Object.freeze(
