@@ -24,10 +24,9 @@ export default function HomePage() {
       const w = winnerOf(row);
       if (w === "opus") acc.opus += 1;
       else if (w === "gpt") acc.gpt += 1;
-      else if (w === "tie") acc.tie += 1;
       return acc;
     },
-    { opus: 0, gpt: 0, tie: 0 },
+    { opus: 0, gpt: 0 },
   );
 
   return (
@@ -71,7 +70,7 @@ export default function HomePage() {
             <p className="mt-1 text-3xl tnum">{BENCHMARKS.length}</p>
           </div>
           <div className="mt-6 grid grid-cols-3 gap-3 border-t border-[var(--rule)] pt-6">
-            <Stat label="Opus" value={tally.opus} accent />
+            <Stat label="Opus" value={tally.opus} />
             <Stat label="GPT" value={tally.gpt} />
             <Stat label="Tie / NA" value={BENCHMARKS.length - tally.opus - tally.gpt} />
           </div>
@@ -112,11 +111,11 @@ export default function HomePage() {
   );
 }
 
-function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div>
       <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">{label}</p>
-      <p className={`mt-1 text-2xl tnum ${accent ? "text-[var(--accent)]" : ""}`}>{value}</p>
+      <p className="mt-1 text-2xl tnum">{value}</p>
     </div>
   );
 }
