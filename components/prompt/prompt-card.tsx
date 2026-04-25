@@ -26,8 +26,8 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
             Cần quan sát
           </p>
           <ul className="mt-2 space-y-1 text-sm">
-            {prompt.watchFor.map((w) => (
-              <li key={w} className="text-[var(--mute)]">— {w}</li>
+            {prompt.watchFor.map((w, i) => (
+              <li key={`${prompt.id}-${i}`} className="text-[var(--mute)]">— {w}</li>
             ))}
           </ul>
         </div>
