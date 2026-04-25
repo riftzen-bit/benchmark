@@ -1,57 +1,55 @@
+import Link from "next/link";
 import { Eyebrow } from "@/components/shared/eyebrow";
 import { Rule } from "@/components/shared/rule";
-import { CtaRow } from "@/components/home/cta-row";
+import { SITE } from "@/lib/config/site";
 
-export function Hero() {
+export function Hero({ tasksCount, runsCount }: { tasksCount: number; runsCount: number }) {
   return (
-    <section className="py-20 md:py-28">
-      {/* Asymmetric duel grid */}
-      <div className="grid grid-cols-1 md:grid-cols-12 md:items-center">
-        {/* Left: Opus — cols 1-5 */}
-        <div className="md:col-span-5">
-          <Eyebrow>Anthropic · 04.16</Eyebrow>
-          <p className="mono mt-1 text-xs uppercase tracking-widest text-[var(--mute)]">Claude</p>
-          <p
-            className="display tnum mt-1 leading-[0.85] tracking-tighter text-[var(--opus)] text-7xl md:text-9xl"
+    <section className="grid gap-10 py-16 md:grid-cols-[1.4fr_1fr] md:items-end md:gap-16 md:py-24">
+      <div>
+        <Eyebrow>{SITE.wordmark}</Eyebrow>
+        <h1 className="figure mt-4 text-5xl leading-[0.95] md:text-7xl">
+          Community-run<br />
+          <span className="text-[var(--accent)]">benchmarks</span> for<br />
+          frontier LLMs.
+        </h1>
+        <p className="mt-6 max-w-prose text-base text-[var(--mute)] md:text-lg">
+          {SITE.description} Anyone signs up, posts a benchmark task, submits a run with a
+          public chat-share link as evidence. The leaderboard is whatever the community has
+          actually run — not vendor PR.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link
+            href="/tasks/new"
+            className="mono border border-[var(--ink)] bg-[var(--ink)] px-4 py-2 text-xs uppercase tracking-widest text-[var(--paper)]"
           >
-            Opus<br />4.7
-          </p>
-        </div>
-
-        {/* Center: vs — cols 6-7 */}
-        <div className="my-8 flex items-center gap-4 md:my-0 md:col-span-2 md:flex-col md:justify-center">
-          <Rule weight="hair" className="flex-1 md:hidden" />
-          <p className="display italic text-3xl text-[var(--mute)]">vs</p>
-          <Rule weight="hair" className="flex-1 md:hidden" />
-        </div>
-
-        {/* Right: GPT — cols 8-12 */}
-        <div className="md:col-span-5 md:text-right">
-          <Eyebrow className="md:justify-end">OpenAI · 04.23</Eyebrow>
-          <p className="mono mt-1 text-xs uppercase tracking-widest text-[var(--mute)] md:text-right">GPT</p>
-          <p
-            className="display tnum mt-1 leading-[0.85] tracking-tighter text-[var(--gpt)] text-7xl md:text-right md:text-9xl"
+            Post a task
+          </Link>
+          <Link
+            href="/leaderboard"
+            className="mono border border-[var(--rule)] px-4 py-2 text-xs uppercase tracking-widest hover:border-[var(--ink)]"
           >
-            5.5
-          </p>
+            Open leaderboard
+          </Link>
         </div>
       </div>
 
-      {/* Full-width hairline */}
-      <Rule weight="hair" className="mt-10 md:mt-14" />
-
-      {/* Kicker paragraph */}
-      <p className="mt-6 max-w-[64ch] text-lg leading-relaxed text-[var(--mute)] md:text-xl">
-        Two frontier models. Public numbers. No spin. Every figure on this site
-        is sourced from the vendor&apos;s release post, system card, or a
-        reputable third-party leaderboard — with the citation linked from each
-        cell.
-      </p>
-
-      {/* CTA row */}
-      <div className="mt-8">
-        <CtaRow />
-      </div>
+      <dl className="grid grid-cols-2 gap-6 border-l border-[var(--rule)] pl-6 md:gap-8">
+        <div>
+          <dt className="eyebrow">Public tasks</dt>
+          <dd className="figure mt-1 text-5xl tabular-nums md:text-6xl">{tasksCount}</dd>
+        </div>
+        <div>
+          <dt className="eyebrow">Total runs</dt>
+          <dd className="figure mt-1 text-5xl tabular-nums md:text-6xl">{runsCount}</dd>
+        </div>
+        <div className="col-span-2">
+          <Rule weight="hair" className="my-2" />
+          <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
+            Issue {SITE.issue} · live
+          </p>
+        </div>
+      </dl>
     </section>
   );
 }

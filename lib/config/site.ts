@@ -1,18 +1,17 @@
 export const SITE = {
   name: "Frontier Tape",
   wordmark: "frontier·tape",
-  tagline:
-    "Two frontier models, public numbers, no spin. Every figure links to its source.",
-  issue: "04.25",
+  tagline: "Community-run benchmarks for frontier LLMs.",
   description:
-    "Side-by-side comparison of Claude Opus 4.7 and GPT-5.5 drawn from public, cited numbers.",
+    "Open community platform for posting and comparing real LLM benchmark runs with cited evidence.",
+  issue: "04.25",
 } as const;
 
 export const NAV = [
   { href: "/", label: "Overview" },
-  { href: "/benchmarks", label: "The Tape" },
-  { href: "/test-yourself", label: "Run it" },
-  { href: "/methodology", label: "Provenance" },
+  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/tasks", label: "Tasks" },
+  { href: "/methodology", label: "Methodology" },
 ] as const;
 
 export type ModelKey = "opus" | "gpt";

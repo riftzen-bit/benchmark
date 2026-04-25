@@ -1,29 +1,25 @@
 import type { Metadata } from "next";
-import { Inter_Tight, JetBrains_Mono, Fraunces } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SITE } from "@/lib/config/site";
 
-const sans = Inter_Tight({
+const sans = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans-loaded",
+  axes: ["opsz"],
 });
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-mono-loaded",
 });
-const display = Fraunces({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-display-loaded",
-});
 
 export const metadata: Metadata = {
-  title: { default: `${SITE.name} — Issue ${SITE.issue}`, template: `%s · ${SITE.name}` },
+  title: { default: SITE.name, template: `%s · ${SITE.name}` },
   description: SITE.description,
 };
 
@@ -32,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${sans.variable} ${mono.variable} ${display.variable}`}
+      className={`${sans.variable} ${mono.variable}`}
     >
       <body className="min-h-screen antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>

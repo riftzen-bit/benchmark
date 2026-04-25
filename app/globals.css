@@ -4,22 +4,21 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-sans-loaded), "Inter Tight", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono-loaded), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --font-display: var(--font-display-loaded), "Fraunces", Georgia, serif;
+  --font-sans: var(--font-sans-loaded), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-loaded), ui-monospace, "JetBrains Mono", SFMono-Regular, monospace;
 
-  --color-paper: #F4F1EA;
-  --color-ink: #14110D;
-  --color-rule: #DCD7CB;
-  --color-mute: #6F6A60;
-  --color-accent: #B14F2E;
-  --color-opus: #B14F2E;
-  --color-gpt: #2E5C66;
-  --color-tie: #8B7E5A;
+  /* Stark neutrals + one bright accent. No warm-paper, no serif display. */
+  --color-paper: #F7F7F5;
+  --color-ink: #0B0B0C;
+  --color-rule: #DCDCD8;
+  --color-mute: #6E6E70;
+  --color-accent: #E2562C;       /* signal — used sparingly */
+  --color-pos: #1E7F3D;
+  --color-neg: #B43325;
 
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 2px;
 
   --animate-ticker: ticker 60s linear infinite;
 }
@@ -29,26 +28,29 @@
   to   { transform: translateX(-50%); }
 }
 
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 :root {
   --background: var(--color-paper);
   --foreground: var(--color-ink);
   --rule: var(--color-rule);
   --mute: var(--color-mute);
   --accent: var(--color-accent);
-  --opus: var(--color-opus);
-  --gpt: var(--color-gpt);
-  --tie: var(--color-tie);
+  --pos: var(--color-pos);
+  --neg: var(--color-neg);
 }
 
 .dark {
-  --background: #15130F;
-  --foreground: #F2EEE5;
-  --rule: #2F2C26;
-  --mute: #8C857A;
-  --accent: #E07A4B;
-  --opus: #E07A4B;
-  --gpt: #5C9BA6;
-  --tie: #B8A56F;
+  --background: #0A0A0B;
+  --foreground: #F2F2EE;
+  --rule: #25252A;
+  --mute: #888888;
+  --accent: #FF7E47;
+  --pos: #4CAF6B;
+  --neg: #E5644F;
 }
 
 * { border-color: var(--rule); }
@@ -67,7 +69,15 @@ html, body {
 }
 
 .mono { font-family: var(--font-mono); }
-.display { font-family: var(--font-display); font-feature-settings: "ss01" 1, "ss03" 1; }
+
+/* Big tabular figure used on hero / leaderboard headers */
+.figure {
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1, "lnum" 1, "ss01" 1;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -79,6 +89,10 @@ html, body {
 
 .hairline { background-color: var(--rule); }
 
+.fade-up {
+  animation: fade-up 360ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
 :where(a, button, [role="button"]):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -89,7 +103,10 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
   .animate-\[ticker_60s_linear_infinite\],
-  .animate-ticker {
+  .animate-ticker,
+  .fade-up {
     animation: none !important;
   }
 }
+
+@view-transition { navigation: auto; }
