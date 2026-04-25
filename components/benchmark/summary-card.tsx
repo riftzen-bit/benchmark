@@ -7,7 +7,8 @@ import { formatDelta } from "@/lib/utils/fmt";
 export function SummaryCard({ row }: { row: BenchmarkRow }) {
   const winner = winnerOf(row);
   const delta = deltaOf(row.opus, row.gpt);
-  const max = row.unit === "%" ? 100 : Math.max(row.opus ?? 0, row.gpt ?? 0) * 1.1;
+  const rawMax = Math.max(row.opus ?? 0, row.gpt ?? 0);
+  const max = row.unit === "%" ? 100 : rawMax > 0 ? rawMax * 1.1 : 1;
   return (
     <article className="border-t border-[var(--rule)] py-6">
       <header className="flex items-baseline justify-between">

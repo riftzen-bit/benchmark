@@ -10,12 +10,15 @@ interface Props {
 }
 
 export function ScoreCell({ value, unit, isWinner, sourceIds }: Props) {
+  const showWinner = isWinner && value !== null;
+  const tone =
+    value === null
+      ? "text-[var(--mute)]"
+      : showWinner
+        ? "font-medium text-[var(--accent)]"
+        : "";
   return (
-    <span
-      className={`mono tnum text-sm ${
-        isWinner ? "font-medium text-[var(--accent)]" : ""
-      } ${value === null ? "text-[var(--mute)]" : ""}`}
-    >
+    <span className={`mono tnum text-sm ${tone}`}>
       {formatScore(value, unit)}
       {sourceIds && sourceIds.length > 0 ? <SourceCite ids={sourceIds} /> : null}
     </span>
