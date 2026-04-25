@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Opus 4.7 vs GPT-5.5 — Benchmark site
 
-## Getting Started
+Local-only Next.js 15 site comparing Anthropic Claude Opus 4.7 and OpenAI GPT-5.5
+using only published, cited numbers.
 
-First, run the development server:
+## Stack
+
+- Next.js 15 (App Router)
+- React 19, TypeScript strict
+- Tailwind v4 + shadcn/ui
+- Zod for build-time data validation
+- Bun runtime (npm fallback supported)
+- Vitest for utils + schema tests
+
+## Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun run dev        # http://localhost:3000
+bun run typecheck
+bun run lint
+bun run build
+bun run test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `app/` — routes (App Router)
+- `components/benchmark/` — table + score primitives
+- `components/prompt/` — test-yourself prompt cards
+- `components/layout/` — header, footer, theme
+- `lib/data/` — typed datasets (benchmarks, prompts, sources, playgrounds, meta)
+- `lib/schema/` — Zod schemas
+- `lib/utils/` — winner / delta / formatting
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Updating data
 
-## Learn More
+1. Edit `lib/data/benchmarks.ts` — every row must reference a `sourceId` that
+   exists in `lib/data/sources.ts`.
+2. Bump `lastUpdated` in `lib/data/meta.ts`.
+3. `bun run test` validates schemas; `bun run build` rejects malformed data.
 
-To learn more about Next.js, take a look at the following resources:
+## What this site does NOT do
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- It does not call Claude or GPT APIs.
+- It does not scrape vendor web UIs.
+- It does not store any of your prompts (everything is client-side copy).
+- It does not require an account from you.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The "Tự thử" page only links you out to free public playgrounds where the two
+models are reachable (LMArena Battle, Duck.ai) or accessible via free vendor tiers.
