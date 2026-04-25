@@ -1,9 +1,10 @@
 import { Brand } from "./brand";
 import { Nav, NavMobile } from "./nav";
 import { ThemeToggle } from "./theme-toggle";
+import { AuthMenu } from "./auth-menu";
 import { Container } from "@/components/shared/container";
 
-export function SiteHeader() {
+export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--rule)] bg-[var(--background)]/85 backdrop-blur">
       <Container width="wide">
@@ -12,6 +13,9 @@ export function SiteHeader() {
           <div className="flex items-center gap-1">
             <Nav />
             <NavMobile />
+            <span className="hidden md:inline-flex">
+              <AuthMenu />
+            </span>
             <span className="ml-1">
               <ThemeToggle />
             </span>
