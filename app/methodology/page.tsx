@@ -2,75 +2,91 @@ import { SOURCES } from "@/lib/data/sources";
 import { SITE_META } from "@/lib/data/meta";
 
 export const metadata = {
-  title: "Phương pháp — Opus 4.7 vs GPT-5.5",
+  title: "Methodology — Opus 4.7 vs GPT-5.5",
 };
 
 export default function MethodologyPage() {
   return (
     <div className="mx-auto max-w-[800px] px-6 py-16 leading-relaxed">
       <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-        Phương pháp
+        Methodology
       </p>
       <h1 className="mt-3 text-4xl font-medium tracking-tight">
-        Số liệu lấy từ đâu, và những điều cần lưu ý
+        Where the numbers come from, and what to watch out for
       </h1>
 
-      <section className="mt-12">
-        <h2 className="text-xl font-medium">Nguồn</h2>
+      <section className="mt-14">
+        <h2 className="text-xl font-medium">Sources</h2>
         <p className="mt-3 text-[var(--mute)]">
-          Mỗi ô trên bảng <em>Benchmarks</em> dẫn link tới nguồn gốc bằng siêu
-          liên kết superscript. Trang chỉ tổng hợp, không tự đo.
+          Every numeric cell on the <em>Benchmarks</em> page carries a superscript citation
+          that links to its source. This site does not run any evaluations of its own — it
+          aggregates and links.
         </p>
-        <ul className="mt-6 space-y-2 text-sm">
+        <ul className="mt-6 space-y-3 text-sm">
           {SOURCES.map((s) => (
             <li key={s.id}>
               <a
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline decoration-[var(--rule)] underline-offset-4 hover:decoration-[var(--accent)]"
+                className="underline decoration-[var(--rule)] decoration-2 underline-offset-4 hover:decoration-[var(--accent)]"
               >
                 {s.label}
               </a>
               <span className="ml-2 mono text-xs text-[var(--mute)]">
-                {s.publisher} · {s.capturedAt}
+                {s.publisher} · captured {s.capturedAt}
               </span>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="mt-12">
-        <h2 className="text-xl font-medium">Cảnh báo</h2>
-        <ul className="mt-4 list-disc space-y-2 pl-6 text-[var(--mute)]">
+      <section className="mt-14">
+        <h2 className="text-xl font-medium">Caveats</h2>
+        <ul className="mt-4 list-disc space-y-3 pl-6 text-[var(--mute)]">
           <li>
-            Một số benchmark chỉ được một bên công bố. Trang đánh dấu{" "}
-            <span className="mono">n/a</span> thay vì suy đoán.
+            Some benchmarks have only been published by one vendor. Where the other vendor
+            has not released a comparable figure, the cell shows <span className="mono">n/a</span>
+            instead of an estimate.
           </li>
           <li>
-            Số có dấu <em>~</em> là ước lượng từ phân tích bên thứ ba khi nhà
-            cung cấp chưa công bố trực tiếp.
+            A few cells are approximated by reputable third-party analysts when the vendor
+            has not published the number directly. Those rows note the approximation.
           </li>
           <li>
-            Cùng một benchmark có thể khác nhau khi đổi prompt, harness, hoặc
-            effort level. Kết quả trên bảng tương ứng cấu hình mặc định mà nhà
-            cung cấp dùng.
+            The same benchmark can produce materially different scores under different
+            prompts, harnesses, or effort levels. The numbers shown reflect each vendor&apos;s
+            default reporting configuration.
           </li>
           <li>
-            Tab <em>Tự thử</em> chỉ là phép thử mang tính giai thoại; không
-            phải đánh giá thống kê.
+            The <em>Try it</em> page is for hands-on intuition, not statistical evaluation.
+            One run on one prompt is anecdote, not data.
           </li>
         </ul>
       </section>
 
-      <section className="mt-12">
-        <h2 className="text-xl font-medium">Cập nhật</h2>
+      <section className="mt-14">
+        <h2 className="text-xl font-medium">Updates</h2>
         <p className="mt-3 text-[var(--mute)]">
-          Lần cuối: <span className="mono">{SITE_META.lastUpdated}</span>. Khi
-          một trong hai nhà cung cấp ra model mới hoặc cập nhật model card,
-          dataset trong <span className="mono">lib/data/benchmarks.ts</span> sẽ
-          được sửa và mốc thời gian trên footer được nâng.
+          Last updated: <span className="mono">{SITE_META.lastUpdated}</span>. When either
+          vendor releases a new model or refreshes its model card, the dataset in{" "}
+          <span className="mono">lib/data/benchmarks.ts</span> is revised and the footer
+          timestamp moves forward.
         </p>
+      </section>
+
+      <section className="mt-14 border-t border-[var(--rule)] pt-10">
+        <h2 className="text-xl font-medium">What this site does not do</h2>
+        <ul className="mt-4 list-disc space-y-3 pl-6 text-[var(--mute)]">
+          <li>It does not call the Anthropic or OpenAI APIs.</li>
+          <li>It does not scrape vendor web UIs.</li>
+          <li>It does not store anything you type into the prompt cards — copying happens
+            entirely in your browser.</li>
+          <li>
+            It does not promise that you can test both models for free at the top tier. The{" "}
+            <em>Try it</em> page lists honest cost tiers for each playground.
+          </li>
+        </ul>
       </section>
     </div>
   );

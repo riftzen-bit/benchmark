@@ -20,22 +20,24 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
         {prompt.body}
       </pre>
 
-      <div className="mt-5 grid gap-6 md:grid-cols-2">
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
         <div>
           <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-            Cần quan sát
+            What to look for
           </p>
-          <ul className="mt-2 space-y-1 text-sm">
+          <ul className="mt-3 space-y-1.5 text-sm">
             {prompt.watchFor.map((w, i) => (
-              <li key={`${prompt.id}-${i}`} className="text-[var(--mute)]">— {w}</li>
+              <li key={`${prompt.id}-${i}`} className="text-[var(--mute)]">
+                <span className="text-[var(--foreground)]">·</span> {w}
+              </li>
             ))}
           </ul>
         </div>
         <div>
           <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-            Mở ở playground
+            Open in
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             {prompt.playgroundIds.map((id) => {
               const p = playgroundById(id);
               if (!p) return null;

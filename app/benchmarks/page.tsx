@@ -8,15 +8,16 @@ export const metadata = {
 export default function BenchmarksPage() {
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-16">
-      <header className="mb-12 max-w-[60ch]">
+      <header className="mb-10 max-w-[65ch]">
         <p className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
-          Bảng đối chiếu
+          Comparison table
         </p>
-        <h1 className="mt-3 text-4xl font-medium tracking-tight">Toàn bộ benchmark</h1>
-        <p className="mt-4 text-[var(--mute)]">
-          Mỗi ô số đều có siêu liên kết về nguồn. Lọc theo nhóm hoặc sắp xếp theo cột.
-          Ô <span className="mono">n/a</span> nghĩa là nhà cung cấp chưa công bố hoặc không
-          tìm được số đáng tin cậy.
+        <h1 className="mt-3 text-4xl font-medium tracking-tight">All {BENCHMARKS.length} benchmarks</h1>
+        <p className="mt-4 text-base leading-relaxed text-[var(--mute)]">
+          Each numeric cell carries a superscript citation that links to the source. Click
+          any column header to sort. Filter by category. <span className="mono">n/a</span>
+          {" "}means the vendor has not published a number, or no reliable third-party figure
+          was found.
         </p>
       </header>
       <BenchmarkTable data={BENCHMARKS} />

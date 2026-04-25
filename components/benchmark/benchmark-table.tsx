@@ -49,10 +49,18 @@ export function BenchmarkTable({ data }: { data: ReadonlyArray<BenchmarkRow> }) 
 
   return (
     <div>
-      <CategoryFilter categories={ALL_CATS} active={cat} onChange={setCat} />
-      <table className="mt-6 w-full border-collapse">
+      <div className="flex flex-wrap items-baseline gap-3">
+        <span className="mono text-xs uppercase tracking-widest text-[var(--mute)]">
+          Filter
+        </span>
+        <CategoryFilter categories={ALL_CATS} active={cat} onChange={setCat} />
+      </div>
+      <p className="mono mt-4 text-xs uppercase tracking-widest text-[var(--mute)]">
+        Showing {rows.length} of {data.length} · click any header to sort
+      </p>
+      <table className="mt-3 w-full border-collapse">
         <thead>
-          <tr className="border-b border-[var(--rule)] text-left">
+          <tr className="border-b border-[var(--foreground)] text-left">
             <Th onClick={() => toggleSort("label")} active={sortKey === "label"} dir={sortDir}>
               Benchmark
             </Th>
@@ -75,7 +83,7 @@ export function BenchmarkTable({ data }: { data: ReadonlyArray<BenchmarkRow> }) 
         </tbody>
       </table>
       {rows.length === 0 ? (
-        <p className="mt-12 text-center text-sm text-[var(--mute)]">Không có dữ liệu.</p>
+        <p className="mt-12 text-center text-sm text-[var(--mute)]">No rows match.</p>
       ) : null}
     </div>
   );
@@ -95,6 +103,7 @@ function Th({
   numeric?: boolean;
 }) {
   const ariaSort = active ? (dir === "asc" ? "ascending" : "descending") : "none";
+  const labelText = typeof children === "string" ? children : "";
   return (
     <th
       aria-sort={ariaSort}
@@ -105,13 +114,26 @@ function Th({
       <button
         type="button"
         onClick={onClick}
-        aria-label={active ? `Sắp xếp theo ${typeof children === "string" ? children : ""}, ${dir === "asc" ? "tăng dần" : "giảm dần"}` : undefined}
-        className={`hover:text-[var(--foreground)] ${
-          active ? "text-[var(--foreground)]" : "text-[var(--mute)]"
+        aria-label={
+          active
+            ? `Sort by ${labelText}, ${dir === "asc" ? "ascending" : "descending"}`
+            : `Sort by ${labelText}`
+        }
+        className={`group inline-flex items-center gap-1 px-1 py-1 transition-colors ${
+          active
+            ? "text-[var(--foreground)]"
+            : "text-[var(--mute)] hover:text-[var(--foreground)]"
         }`}
       >
         {children}
-        {active ? <span className="ml-1">{dir === "asc" ? "↑" : "↓"}</span> : null}
+        <span
+          className={`text-[10px] transition-opacity ${
+            active ? "opacity-100" : "opacity-30 group-hover:opacity-100"
+          }`}
+          aria-hidden
+        >
+          {active ? (dir === "asc" ? "↑" : "↓") : "↕"}
+        </span>
       </button>
     </th>
   );
@@ -121,9 +143,9 @@ function Row({ row }: { row: BenchmarkRow }) {
   const winner = winnerOf(row);
   const delta = deltaOf(row.opus, row.gpt);
   return (
-    <tr className="border-b border-[var(--rule)] align-baseline">
+    <tr className="border-b border-[var(--rule)] align-baseline transition-colors hover:bg-[var(--rule)]/40">
       <td className="py-3 pr-4 text-sm">
-        {row.label}
+        <span className="font-medium">{row.label}</span>
         {row.note ? <span className="ml-2 text-xs text-[var(--mute)]">— {row.note}</span> : null}
       </td>
       <td className="py-3 pr-2 text-right">

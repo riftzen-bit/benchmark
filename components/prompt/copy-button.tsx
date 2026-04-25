@@ -27,11 +27,11 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 border border-[var(--rule)] px-3 py-1.5 text-xs hover:border-[var(--foreground)]"
-      aria-label={copied ? "Đã copy" : label}
+      className="inline-flex items-center gap-2 border border-[var(--foreground)] bg-[var(--foreground)] px-4 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:bg-transparent hover:text-[var(--foreground)]"
+      aria-label={copied ? "Copied to clipboard" : label}
     >
-      {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-      {copied ? "Đã copy" : label}
+      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      {copied ? "Copied" : label}
     </button>
   );
 }

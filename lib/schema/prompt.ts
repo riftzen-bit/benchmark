@@ -28,12 +28,21 @@ export const PromptSchema = z.object({
 });
 export type Prompt = z.infer<typeof PromptSchema>;
 
+export const PlaygroundCost = z.enum([
+  "free-no-account",
+  "free-with-account",
+  "subscription",
+  "pay-as-you-go",
+]);
+export type PlaygroundCost = z.infer<typeof PlaygroundCost>;
+
 export const PlaygroundSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
   url: z.url(),
-  needsAccount: z.boolean(),
-  models: z.array(z.enum(["opus-4-7", "gpt-5-5", "both", "anonymous"])),
+  cost: PlaygroundCost,
+  models: z.string().min(1),
+  forModel: z.enum(["opus-4-7", "gpt-5-5", "both", "anonymous"]),
   note: z.string().optional(),
 });
 export type Playground = z.infer<typeof PlaygroundSchema>;

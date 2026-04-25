@@ -59,9 +59,9 @@ const raw: Source[] = [
   },
   {
     id: "lmarena-snapshot",
-    label: "LMArena Leaderboard (snapshot)",
-    url: "https://lmarena.ai/leaderboard",
-    publisher: "LMArena",
+    label: "Arena (formerly LMArena) Leaderboard",
+    url: "https://arena.ai/leaderboard/text",
+    publisher: "Arena",
     capturedAt: "2026-04-25",
   },
 ];

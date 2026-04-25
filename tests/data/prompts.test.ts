@@ -25,8 +25,8 @@ describe("prompts dataset", () => {
 });
 
 describe("playgrounds dataset", () => {
-  it("has 5 playgrounds", () => {
-    expect(PLAYGROUNDS.length).toBe(5);
+  it("has 7 playgrounds", () => {
+    expect(PLAYGROUNDS.length).toBe(7);
   });
 
   it("ids are unique", () => {
@@ -34,11 +34,14 @@ describe("playgrounds dataset", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("free playgrounds (no account) have models marked appropriately", () => {
-    const free = PLAYGROUNDS.filter((p) => !p.needsAccount);
-    expect(free.length).toBeGreaterThan(0);
-    for (const p of free) {
+  it("every playground has a non-empty models description", () => {
+    for (const p of PLAYGROUNDS) {
       expect(p.models.length).toBeGreaterThan(0);
     }
+  });
+
+  it("at least one playground is free without account", () => {
+    const noAccount = PLAYGROUNDS.filter((p) => p.cost === "free-no-account");
+    expect(noAccount.length).toBeGreaterThan(0);
   });
 });

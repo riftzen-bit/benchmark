@@ -1,6 +1,6 @@
 export const SITE_META = {
   title: "Opus 4.7 vs GPT-5.5",
-  tagline: "Đối chiếu hai mô hình mạnh nhất tháng 4/2026 bằng số liệu công khai.",
+  tagline: "Side-by-side benchmarks for the two strongest frontier models of April 2026, drawn entirely from public, cited numbers.",
   lastUpdated: "2026-04-25",
   models: {
     opus: {

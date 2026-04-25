@@ -6,146 +6,184 @@ const raw: Prompt[] = [
     title: "Needle in a long stack",
     category: "long-context",
     difficulty: "hard",
-    body: `Bên dưới là 50 đoạn văn về lịch sử cà phê Việt Nam (mỗi đoạn ~400 từ). Trong đoạn thứ 37, có chính xác một câu chứa số tài khoản giả định "AC-19880412-XQ". Hãy trích nguyên câu đó, kèm số đoạn, và liệt kê 3 manh mối ngữ nghĩa giúp bạn loại trừ các đoạn còn lại.
+    body: `Below is a long document — paste 50 paragraphs of any long-form text before sending. In the 37th paragraph, place a single sentence that contains the fictional account number "AC-19880412-XQ".
 
-(Khi paste vào playground, đính kèm 50 đoạn văn dài bất kỳ — yêu cầu trích đúng câu chứa chuỗi đó.)`,
+Task:
+1. Quote the exact sentence containing AC-19880412-XQ.
+2. State which paragraph number it appears in.
+3. List 3 semantic clues that let you rule out the other paragraphs.
+
+Do not paraphrase. Do not invent neighboring sentences.`,
     watchFor: [
-      "Trích đúng câu chứa AC-19880412-XQ",
-      "Nêu đúng số đoạn 37",
-      "Không bịa các câu lân cận",
+      "Quotes the sentence containing AC-19880412-XQ exactly",
+      "Identifies paragraph 37 correctly",
+      "Does not hallucinate adjacent sentences",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "multi-file-refactor",
-    title: "Refactor đa-file (TypeScript)",
+    title: "Multi-file TypeScript bug hunt",
     category: "coding",
     difficulty: "hard",
-    body: `Cho 3 file TS ngắn: \`user.ts\`, \`auth.ts\`, \`api.ts\`. Trong \`auth.ts\` có lỗi off-by-one ở kiểm tra hết hạn token (\`<\` thay vì \`<=\`). Yêu cầu:
-1. Xác định bug và giải thích.
-2. Đề xuất diff tối thiểu (unified diff) sửa đúng chỗ.
-3. Liệt kê các call-site bị ảnh hưởng.
-4. Viết 1 test Vitest tái hiện bug.
+    body: `Paste the three files below. \`auth.ts\` has an off-by-one bug in the token expiry check (uses \`<\` where it should use \`<=\`).
 
-(Paste 3 file mẫu khi test.)`,
+\`\`\`ts
+// user.ts
+export interface User { id: string; tokenExp: number }
+
+// auth.ts
+import type { User } from "./user";
+export function isExpired(u: User, now: number) {
+  return u.tokenExp < now; // bug
+}
+
+// api.ts
+import { isExpired } from "./auth";
+export function authorize(u: User) {
+  if (isExpired(u, Date.now())) throw new Error("expired");
+  return u;
+}
+\`\`\`
+
+Task:
+1. Identify the bug and explain why it matters.
+2. Show the minimal unified diff that fixes it.
+3. List the call sites affected.
+4. Write a Vitest test that reproduces the bug (fails before the fix, passes after).`,
     watchFor: [
-      "Phát hiện đúng off-by-one",
-      "Diff sạch, không refactor thừa",
-      "Test thực sự fail trước khi sửa",
+      "Identifies the off-by-one correctly",
+      "Diff is minimal — does not refactor unrelated code",
+      "Test fails before the fix and passes after",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground", "poe"],
   },
   {
     id: "aime-style",
-    title: "Toán reasoning (AIME-style)",
+    title: "AIME-style number theory",
     category: "math",
     difficulty: "extreme",
-    body: `Cho \\(f(x) = x^3 - 6x^2 + 11x - 6\\). Tìm tổng tất cả số nguyên \\(n\\) trong \\([-100, 100]\\) sao cho \\(f(n) \\mid n^4 + 1\\). Trình bày đầy đủ lập luận, không dùng tool ngoài.`,
+    body: `Let f(x) = x^3 - 6x^2 + 11x - 6. Find the sum of all integers n in [-100, 100] such that f(n) divides n^4 + 1. Show your full reasoning. Do not use external tools.`,
     watchFor: [
-      "Phân tích nghiệm f(n)",
-      "Lập luận chia hết chặt chẽ",
-      "Không bỏ sót n âm",
+      "Factors f(n) = (n-1)(n-2)(n-3)",
+      "Reasons about divisibility carefully",
+      "Does not skip negative n",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "agent-tool-plan",
-    title: "Plan agentic tool-use",
+    title: "Agentic tool-use planning",
     category: "agent",
     difficulty: "hard",
-    body: `Bạn là agent điều phối, có 4 tool: \`search_web(q)\`, \`read_url(u)\`, \`run_python(code)\`, \`write_file(path, content)\`. Nhiệm vụ: tổng hợp giá xăng RON95 trung bình tại 5 thành phố lớn Việt Nam trong tuần qua, xuất ra \`prices.csv\`. Hãy xuất plan dưới dạng JSON có \`steps: [{tool, input, why}]\`. Tối thiểu hoá số tool call.`,
+    body: `You are a coordinator agent with four tools:
+\`search_web(q)\`, \`read_url(u)\`, \`run_python(code)\`, \`write_file(path, content)\`.
+
+Goal: produce \`prices.csv\` with the average RON95 gasoline price for the past week in five major Vietnamese cities.
+
+Output a plan as JSON: \`{ steps: [{ tool, input, why }] }\`. Minimize the number of tool calls. Do not actually execute — just plan.`,
     watchFor: [
-      "Plan có thứ tự hợp lý",
-      "Không gọi tool dư thừa",
-      "Định dạng JSON hợp lệ",
+      "Steps are in a logical order",
+      "No redundant tool calls",
+      "Output is valid JSON",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "vision-chart-read",
-    title: "Đọc biểu đồ độ phân giải cao",
+    title: "High-resolution chart reading",
     category: "vision",
     difficulty: "medium",
-    body: `(Đính kèm 1 ảnh PNG biểu đồ cột so sánh 6 model trên 1 benchmark — chú thích nhỏ, lưới mảnh.)
-Hãy:
-1. Đọc giá trị chính xác cho từng cột (đến 1 chữ số thập phân).
-2. Xếp hạng từ cao xuống thấp.
-3. Tính chênh lệch giữa cột 1 và cột cuối.
+    body: `Attach a screenshot of a bar chart that compares 6 models on one benchmark — pick any chart with small annotations and a fine grid (e.g., from a recent model release post).
 
-(Yêu cầu cho cả 2 model: chỉ trả lời sau khi đọc ảnh; không đoán.)`,
+Task:
+1. Read each bar value to one decimal place.
+2. Rank from highest to lowest.
+3. Compute the difference between the top and bottom bars.
+
+Only answer after reading the image. Do not guess.`,
     watchFor: [
-      "Đọc đúng giá trị cột",
-      "Không hallucinate model không có",
-      "Phép trừ cuối chính xác",
+      "Reads each bar accurately",
+      "Does not invent models that are not in the chart",
+      "Final subtraction is correct",
     ],
-    playgroundIds: ["claude-ai", "chatgpt", "duckai"],
+    playgroundIds: ["claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "multilingual-mix",
-    title: "Suy luận đa ngôn ngữ",
+    title: "Multilingual reasoning",
     category: "multilingual",
     difficulty: "hard",
-    body: `Đoạn dưới đây xen kẽ Việt – Anh – 中文 – 日本語. Yêu cầu:
-1. Dịch toàn bộ ra tiếng Anh học thuật.
-2. Trích 3 luận điểm chính.
-3. Chỉ ra 1 mâu thuẫn nội tại nếu có.
+    body: `The passage below mixes Vietnamese, English, Chinese, and Japanese. Tasks:
+1. Translate the whole thing into formal academic English.
+2. Extract the three main claims.
+3. Identify any internal contradiction, or state confidently that there is none.
 
-"Thị trường AI 2026 cho thấy 三大玩家 đang định hình. While Anthropic 主张 safety-first, OpenAI 強調 deployment 速度. 一方、Googleは両方を試みているが、結果は混合的。 Tuy nhiên, có chuyên gia cho rằng cả ba đều đang lặp lại sai lầm của social-media era."`,
+"Thị trường AI 2026 cho thấy 三大玩家 đang định hình. While Anthropic 主张 safety-first, OpenAI 強調 deployment 速度. 一方、Googleは両方を試みているが、結果は混合的. Tuy nhiên, có chuyên gia cho rằng cả ba đều đang lặp lại sai lầm của social-media era."`,
     watchFor: [
-      "Bản dịch chính xác cả 4 ngôn ngữ",
-      "Luận điểm rút gọn hợp lý",
-      "Phát hiện hoặc khẳng định không có mâu thuẫn rõ",
+      "Translates all four languages accurately",
+      "Claims are stated concisely",
+      "Either flags a real contradiction or correctly says there is none",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "adversarial-logic",
-    title: "Logic ngược-trực-giác",
+    title: "Counter-intuitive parity puzzle",
     category: "reasoning",
     difficulty: "hard",
-    body: `Có 100 hộp đánh số 1..100. Mỗi hộp chứa một số nguyên dương (có thể trùng). Bạn được biết: tổng tất cả các số bằng 5050, và mỗi hộp \\(i\\) chứa số khác \\(i\\). Hỏi: số lượng cấu hình hợp lệ là chẵn hay lẻ? Giải thích.`,
+    body: `100 boxes are numbered 1..100. Each box contains a positive integer (duplicates allowed). You are told two facts:
+(a) the sum of all 100 numbers is 5050,
+(b) for every i, box i does NOT contain i.
+
+Question: is the number of valid configurations even or odd? Justify rigorously.`,
     watchFor: [
-      "Lập luận parity rõ ràng",
-      "Không nhầm lẫn với hoán vị derangement đơn thuần",
-      "Kết luận đúng chẵn/lẻ",
+      "Builds a clean parity argument",
+      "Does not confuse this with a pure derangement count",
+      "States the correct parity",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "long-horizon-plan",
-    title: "Kế hoạch dài hạn 12 tuần",
+    title: "12-week study plan",
     category: "planning",
     difficulty: "medium",
-    body: `Lập kế hoạch 12 tuần để một dev mid-level (đã biết React) chuyển sang chuyên về compiler internals. Yêu cầu: tuần x tuần, mỗi tuần có (a) mục tiêu đo được, (b) 2-3 tài nguyên cụ thể có tên thật, (c) một bài tập kết thúc tuần. Không phóng đại, không "self-help" giọng văn.`,
+    body: `Build a 12-week plan for a mid-level frontend engineer (already proficient in React) to specialize in compiler internals. For each week, give:
+(a) one measurable goal,
+(b) 2–3 named real resources (books, papers, repos — no fabricated titles),
+(c) one end-of-week exercise.
+
+No motivational filler. No "self-help" voice. Direct, technical, specific.`,
     watchFor: [
-      "Tài nguyên có thật, không bịa",
-      "Mục tiêu đo được",
-      "Lộ trình tăng dần độ khó",
+      "Resources are real and findable",
+      "Goals are measurable, not vague",
+      "Difficulty ramps sensibly across weeks",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground", "poe"],
   },
   {
     id: "creative-constraint",
-    title: "Sáng tác có ràng buộc",
+    title: "Constrained flash fiction",
     category: "creative",
     difficulty: "medium",
-    body: `Viết một truyện flash 250 từ về một AI từ chối trả lời. Ràng buộc:
-- Mỗi câu phải dài đúng ≤ 12 từ.
-- Phải có 3 lần nhắc đến "mưa" mà không nói nó là ẩn dụ cho gì.
-- Không dùng từ "consciousness", "soul", "feel".`,
+    body: `Write a 250-word flash fiction piece about an AI that refuses to answer. Constraints:
+- Every sentence must be 12 words or fewer.
+- The word "rain" must appear exactly three times, never as an explicit metaphor.
+- Do not use the words "consciousness", "soul", or "feel".`,
     watchFor: [
-      "Đếm đúng câu ≤ 12 từ",
-      "Đủ 3 lần 'mưa'",
-      "Không vi phạm danh sách cấm",
+      "Every sentence is ≤ 12 words",
+      "'rain' appears exactly three times",
+      "None of the banned words appear",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground"],
   },
   {
     id: "debug-underspec",
-    title: "Debug khi spec thiếu",
+    title: "Debug under spec ambiguity",
     category: "debug",
     difficulty: "hard",
-    body: `Đoạn Python sau đôi khi trả về list rỗng:
+    body: `A user reports this Python function "never deduplicates when I pass a list of dicts":
 
 \`\`\`python
 def dedupe_keep_order(xs):
@@ -158,13 +196,16 @@ def dedupe_keep_order(xs):
     return out
 \`\`\`
 
-Người dùng báo: "Khi tôi truyền list các dict, nó không bao giờ dedupe." Hỏi: bug do đâu? Đề xuất 2 cách sửa với trade-off khác nhau, và viết test phân biệt 2 cách đó.`,
+Task:
+1. Explain the underlying cause.
+2. Propose two fixes with materially different trade-offs (e.g., hash-by-key vs. canonical serialization).
+3. Write one test that distinguishes which fix the user actually wants.`,
     watchFor: [
-      "Hiểu dict không hashable / hashable",
-      "2 hướng sửa thực sự khác nhau (ví dụ: hash-by-key vs serialize)",
-      "Test phân biệt rõ ràng",
+      "Identifies hashability as the cause",
+      "Two fixes are genuinely different (not cosmetic variants)",
+      "Test cleanly distinguishes the two",
     ],
-    playgroundIds: ["lmarena", "duckai", "claude-ai", "chatgpt"],
+    playgroundIds: ["arena-battle", "claude-pro", "anthropic-console", "chatgpt-plus", "openai-playground", "poe"],
   },
 ];
 
