@@ -1,51 +1,95 @@
-# Opus 4.7 vs GPT-5.5 — Benchmark site
+# Frontier Tape — Community LLM Benchmark Platform
 
-Local-only Next.js 15 site comparing Anthropic Claude Opus 4.7 and OpenAI GPT-5.5
-using only published, cited numbers.
+Next.js 15 + Supabase platform where the community submits real benchmark runs
+(model + prompt + score + evidence) and compares them side-by-side. Mid-rebuild
+from a static-data comparison into an authenticated platform — see
+`docs/superpowers/specs/2026-04-25-community-rebuild-master.md`.
 
 ## Stack
 
-- Next.js 15 (App Router)
+- Next.js 15 (App Router, Server Actions, RSC)
 - React 19, TypeScript strict
-- Tailwind v4 + shadcn/ui
-- Zod for build-time data validation
-- Bun runtime (npm fallback supported)
-- Vitest for utils + schema tests
+- Tailwind v4
+- Supabase (Postgres + Auth + Storage) — free tier
+- Zod validation
+- Vitest tests
+- Bun runtime
+
+## Backend setup (one-time, you run this)
+
+1. Create a free Supabase project at https://supabase.com.
+2. Locally:
+
+   ```bash
+   bunx supabase login
+   bunx supabase init                     # if not already
+   bunx supabase link --project-ref <ref>
+   bunx supabase db push                  # applies supabase/migrations/*
+   bunx supabase db seed                  # seeds models + categories
+   bunx supabase gen types typescript --linked > lib/db/types.ts
+   ```
+
+3. Copy `.env.local.example` → `.env.local` and fill the four `SUPABASE_*` vars
+   from your project's API settings.
+4. Optional: enable Google OAuth in Supabase → Auth → Providers, and add a
+   redirect URL `http://localhost:3000/auth/callback` (plus your prod URL).
 
 ## Run
 
 ```bash
 bun install
-bun run dev        # http://localhost:3000
+bun run dev          # http://localhost:3000
 bun run typecheck
 bun run lint
-bun run build
 bun run test
+bun run guard        # forbids SUPABASE_SERVICE_ROLE_KEY outside server-only allowlist
+bun run build
 ```
 
-## Structure
+## Layout
 
-- `app/` — routes (App Router)
-- `components/benchmark/` — table + score primitives
-- `components/prompt/` — test-yourself prompt cards
-- `components/layout/` — header, footer, theme
-- `lib/data/` — typed datasets (benchmarks, prompts, sources, playgrounds, meta)
-- `lib/schema/` — Zod schemas
-- `lib/utils/` — winner / delta / formatting
+```
+app/
+  (auth)/             # sign-in, sign-up pages (route group)
+  auth/callback/      # OAuth + email confirmation handler
+  auth/sign-out/      # POST sign-out
+  api/health/         # ping endpoint (writes to public.pings)
+  profile/            # authenticated profile editor
+  benchmarks/         # static-data view (Phase 2 swaps to DB)
+  test-yourself/
+  methodology/
+components/
+  benchmark/          # board + score primitives
+  layout/             # header, footer, nav, theme
+  shared/             # eyebrow, container, rule, …
+lib/
+  auth/               # session helpers, server actions, schemas
+  supabase/           # server / browser / middleware / admin clients
+  db/                 # generated types + queries
+  data/               # legacy static datasets (Phase 2 retires)
+supabase/
+  migrations/         # 0001_init / 0002_triggers / 0003_rls
+  seed.sql
+docs/superpowers/     # specs + plans
+```
 
-## Updating data
+## Phase status
 
-1. Edit `lib/data/benchmarks.ts` — every row must reference a `sourceId` that
-   exists in `lib/data/sources.ts`.
-2. Bump `lastUpdated` in `lib/data/meta.ts`.
-3. `bun run test` validates schemas; `bun run build` rejects malformed data.
+- **Phase 1 — Foundation + Auth** (this rebuild): Supabase wired, schema +
+  RLS migrations checked in, sign-up / sign-in / sign-out, profile editor,
+  health-ping cron. **In progress.**
+- Phase 2 — Tasks & runs CRUD. *Pending.*
+- Phase 3 — Discovery + voting. *Pending.*
+- Phase 4 — Visual rebuild (replace AI-default aesthetic). *Pending.*
+- Phase 5 — Motion polish. *Pending.*
 
-## What this site does NOT do
+See `docs/superpowers/specs/` for full specs and `docs/superpowers/plans/`
+for implementation plans.
 
-- It does not call Claude or GPT APIs.
-- It does not scrape vendor web UIs.
-- It does not store any of your prompts (everything is client-side copy).
-- It does not require an account from you.
+## Free-tier ops
 
-The "Tự thử" page only links you out to free public playgrounds where the two
-models are reachable (LMArena Battle, Duck.ai) or accessible via free vendor tiers.
+- Supabase free tier pauses projects after 7 days of zero traffic. The daily
+  GitHub Action `health-ping.yml` hits `/api/health` to prevent that. Set the
+  repo secret `HEALTH_URL` to your deployed URL once Phase 1 lands.
+- Service-role key is server-only. The `bun run guard` check fails CI if it
+  ever leaks into a client module.
