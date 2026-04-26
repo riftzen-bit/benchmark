@@ -9,6 +9,7 @@ export const SITE = {
 
 export const NAV = [
   { href: "/", label: "Overview" },
+  { href: "/pulse", label: "Pulse" },
   { href: "/compare", label: "Compare" },
   { href: "/benchmarks", label: "Tape" },
   { href: "/leaderboard", label: "Leaderboard" },
@@ -17,6 +18,15 @@ export const NAV = [
   { href: "/vendors", label: "Vendors" },
   { href: "/test-yourself", label: "Run it" },
   { href: "/methodology", label: "Methodology" },
+] as const;
+
+export const NAV_PRIMARY_HREFS = [
+  "/pulse",
+  "/compare",
+  "/benchmarks",
+  "/leaderboard",
+  "/tasks",
+  "/test-yourself",
 ] as const;
 
 export type ModelKey = "opus" | "gpt";
