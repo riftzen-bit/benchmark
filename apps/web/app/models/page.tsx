@@ -54,6 +54,20 @@ export default async function ModelsPage() {
 
       <Rule weight="hair" className="my-16" />
 
+      <section className="grid gap-6">
+        <header className="flex items-baseline justify-between gap-4">
+          <div>
+            <Eyebrow>Hugging Face &middot; trending right now</Eyebrow>
+            <h2 className="display mt-2 text-2xl tracking-tight md:text-3xl">
+              What the open-weights world is downloading.
+            </h2>
+          </div>
+        </header>
+        <p className="mono py-8 text-center text-xs uppercase tracking-widest text-[var(--mute)]">
+          — section pending visual identity rebuild
+        </p>
+      </section>
+
       <Rule weight="hair" className="my-16" />
 
       <section className="grid gap-6">
