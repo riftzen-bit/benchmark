@@ -1,18 +1,22 @@
 import { WordUp } from "./word-up";
 
 type Level = "xl" | "lg" | "md";
+type Heading = "h1" | "h2" | "h3";
 
 export function Display({
   level,
+  as: Tag = "h1",
   footnoteMark,
   children,
 }: {
   level: Level;
+  as?: Heading;
   footnoteMark?: "*" | "†";
+  // string required: WordUp splits on spaces.
   children: string;
 }) {
   return (
-    <h1 className={`display-${level}`}>
+    <Tag className={`display-${level}`}>
       <span className="inline-block">
         <WordUp text={children} />
         {footnoteMark && (
@@ -24,6 +28,6 @@ export function Display({
           </sup>
         )}
       </span>
-    </h1>
+    </Tag>
   );
 }
