@@ -51,6 +51,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Sear
     { label: "livebench", status: snap.sources.liveBench },
   ];
   const liveCount = sourceStatus.filter((s) => s.status === "live").length;
+  const extras = selected.filter((id) => id !== "claude-opus-4-7" && id !== "gpt-5.5");
 
   const cols: Column<Row>[] = [
     {
@@ -122,10 +123,18 @@ export default async function ComparePage({ searchParams }: { searchParams: Sear
 
       {/* PICKER BAND */}
       <div className="border-b border-[var(--rule)] px-8 py-5">
-        <div className="mb-3">
-          <Eyebrow>Pick 2-6 models</Eyebrow>
+        <div className="mb-3 flex items-end justify-between gap-4">
+          <Eyebrow>Pick 2-6 models · drives Live boards above only</Eyebrow>
+          <span className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
+            row-by-row below stays on Opus 4.7 vs GPT-5.5
+          </span>
         </div>
         <ComparePicker selected={selected} />
+        {extras.length > 0 && (
+          <p className="mono mt-3 text-[11px] text-[var(--cream-mute)]">
+            <span className="text-[var(--cream)]">{extras.join(", ")}</span> picked but not in row-by-row scope (cited data covers Opus + GPT only).
+          </p>
+        )}
       </div>
 
       {/* EXTERNAL RANKINGS BAND */}
@@ -149,10 +158,22 @@ export default async function ComparePage({ searchParams }: { searchParams: Sear
       </div>
       <DataTable rowKey={(r) => r.id} columns={cols} rows={matrix} />
 
+      {/* REFERENCE PAIR DIVIDER */}
+      <div className="mt-12 border-y border-[var(--rule)] bg-[var(--paper-2)] px-8 py-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <span className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
+            Reference pair · fixed scope
+          </span>
+          <span className="mono text-[11px] tracking-[-0.01em] text-[var(--cream)]">
+            claude-opus-4-7 <span className="text-[var(--cream-mute)]">vs</span> gpt-5.5
+          </span>
+        </div>
+      </div>
+
       {/* VERDICT BAND */}
       <div className="px-8 pt-10">
         <div className="mb-3 flex items-end gap-4">
-          <Eyebrow>Verdict bar · Opus 4.7 vs GPT-5.5</Eyebrow>
+          <Eyebrow>Verdict bar · cited rows only</Eyebrow>
           <h2 className="display-md">Who wins</h2>
         </div>
         <CompareVerdict rows={BENCHMARKS} />
@@ -165,7 +186,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Sear
           <h2 className="display-md">Row by row</h2>
         </div>
         <p className="mb-5 max-w-prose text-[13px] leading-[1.5] text-[var(--cream-mute)]">
-          Currently covers Opus 4.7 and GPT-5.5 only — citation-backed numbers for more frontier models are pending.
+          Each row = one published benchmark. Bars show advantage of the leader; Δ is signed gap. Citation-backed numbers for more frontier models pending.
         </p>
         <CompareBoard rows={BENCHMARKS} />
       </div>
