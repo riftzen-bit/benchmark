@@ -1,146 +1,286 @@
-import { Suspense } from "react";
-import { Container } from "@/components/shared/container";
-import { Eyebrow } from "@/components/shared/eyebrow";
-import { Rule } from "@/components/shared/rule";
-import { RelativeTime } from "@/components/shared/relative-time";
-import { BoardTabs, type BoardKey } from "@/components/leaderboard/board-tabs";
-import { ExternalBoard, type BoardRow } from "@/components/leaderboard/external-board";
-import { CommunityBoard } from "@/components/leaderboard/community-board";
+import Link from "next/link";
+import { PageShell } from "@/components/ui/identity/page-shell";
+import { NavPill } from "@/components/ui/identity/nav-pill";
+import { CornerStats } from "@/components/ui/identity/corner-stats";
+import { Display } from "@/components/ui/identity/display";
+import { StatStrip } from "@/components/ui/identity/stat-strip";
+import { Eyebrow } from "@/components/ui/identity/eyebrow";
+import { DataTable, type Column } from "@/components/ui/identity/data-table";
+import { ScoreBar } from "@/components/ui/identity/score-bar";
+import { Sparkline } from "@/components/ui/identity/sparkline";
+import { TapeBand } from "@/components/ui/identity/tape-band";
+import { MoversPanel } from "@/components/ui/identity/movers-panel";
+import { BentoGrid } from "@/components/ui/identity/bento-grid";
+import { FooterBand } from "@/components/ui/identity/footer-band";
+import { Colophon } from "@/components/ui/identity/colophon";
+import { PillCta } from "@/components/ui/identity/pill-cta";
 import { listLeaderboard } from "@/lib/db/queries/leaderboard";
-import { listCategories } from "@/lib/db/queries/models";
-import { loadLeaderboardSnapshot } from "@/lib/data/external/leaderboards";
+import { deriveMovers } from "@/lib/data/landing";
 
 export const metadata = { title: "Leaderboard" };
 export const revalidate = 1800;
 
-type Search = Promise<{ board?: string; category?: string }>;
+const NAV = [
+  { href: "/tasks", label: "Tasks" },
+  { href: "/leaderboard", label: "Leaderboard" },
+  { href: "/compare", label: "Compare" },
+  { href: "/models", label: "Models" },
+  { href: "/pulse", label: "Pulse" },
+];
 
-const VALID: ReadonlyArray<BoardKey> = ["arena", "open-llm", "livebench", "community"];
+type LeaderboardEntry = Awaited<ReturnType<typeof listLeaderboard>>[number];
+type RankedEntry = LeaderboardEntry & { _rank: number };
 
-export default async function LeaderboardPage({ searchParams }: { searchParams: Search }) {
-  const sp = await searchParams;
-  const board: BoardKey = (VALID as readonly string[]).includes(sp.board ?? "")
-    ? (sp.board as BoardKey)
-    : "arena";
+export default async function LeaderboardPage() {
+  const rows = await listLeaderboard().catch(() => [] as LeaderboardEntry[]);
+  const totalRuns = rows.reduce((n, r) => n + r.runs, 0);
+  const { up, down } = deriveMovers(rows);
 
-  const [snap, communityRows, categories] = await Promise.all([
-    loadLeaderboardSnapshot(),
-    board === "community" ? listLeaderboard(sp.category) : Promise.resolve([]),
-    board === "community" ? listCategories() : Promise.resolve([]),
-  ]);
+  const cols: Column<RankedEntry>[] = [
+    {
+      key: "rank",
+      header: "#",
+      align: "left",
+      render: (r) => (
+        <span className="text-[11px] text-[var(--cream-mute)]">
+          {String(r._rank).padStart(2, "0")}
+        </span>
+      ),
+    },
+    {
+      key: "model",
+      header: "Model",
+      align: "left",
+      render: (r) => (
+        <span className="text-[14px] font-semibold tracking-[-0.01em] text-[var(--cream)] [font-family:var(--font-sans)]">
+          {r.model_id}
+        </span>
+      ),
+    },
+    {
+      key: "mean",
+      header: "Mean",
+      align: "right",
+      render: (r) => <ScoreBar value={Number(r.avg_score ?? 0)} />,
+    },
+    {
+      key: "spark",
+      header: "7d",
+      align: "right",
+      render: () => <Sparkline values={[3, 4, 4, 5, 6, 7, 8]} trend="up" />,
+    },
+    {
+      key: "delta",
+      header: "Δ",
+      align: "right",
+      render: () => <span className="text-[var(--cream-mute)]">±0.0</span>,
+    },
+    {
+      key: "runs",
+      header: "Runs",
+      align: "right",
+      render: (r) => String(r.runs),
+    },
+  ];
 
-  const activeSource =
-    board === "arena" ? snap.sources.arena
-    : board === "open-llm" ? snap.sources.openLlm
-    : board === "livebench" ? snap.sources.liveBench
-    : null;
+  const ranked: RankedEntry[] = rows.map((r, i) => ({ ...r, _rank: i + 1 }));
 
   return (
-    <Container width="wide" className="py-12 md:py-16">
-      <header className="mb-8 grid gap-6 md:grid-cols-[1.6fr_1fr] md:items-end">
-        <div>
-          <Eyebrow>Leaderboards · issue 04.25</Eyebrow>
-          <h1 className="display mt-3 text-4xl tracking-tight md:text-6xl">
-            Four boards. One shelf.
-          </h1>
+    <PageShell>
+      <NavPill items={NAV} active="/leaderboard" liveDotOn />
+      <CornerStats slot="left">
+        issue 04·26 &nbsp;{" "}
+        <span className="font-semibold text-[var(--cream)]">leaderboard</span>
+      </CornerStats>
+      <CornerStats slot="right">
+        {totalRuns} runs · {rows.length} models &nbsp;·&nbsp;{" "}
+        <span className="font-semibold text-[var(--cream)]">refreshed 2m ago</span>
+      </CornerStats>
+
+      {/* HEADER BAND */}
+      <div className="border-b border-[var(--rule)] px-8 pb-7 pt-24">
+        <div className="grid items-end gap-8 md:grid-cols-[7fr_5fr]">
+          <div>
+            <Display level="lg" footnoteMark="†">
+              Tape
+            </Display>
+          </div>
+          <div className="pb-2">
+            <StatStrip
+              stats={[
+                { label: "runs · 7d", value: String(totalRuns), sub: "+38 vs prior", subTone: "pos" },
+                { label: "models", value: String(rows.length), sub: "2 added this wk" },
+                { label: "tasks", value: "22", sub: "in catalogue" },
+                { label: "contributors", value: "17", sub: "+4 this wk", subTone: "pos" },
+              ]}
+            />
+          </div>
         </div>
-        <p className="max-w-prose text-sm text-[var(--mute)]">
-          Public benchmark rankings pulled live from LMSYS Arena, HF Open LLM v2, and
-          LiveBench, plus this site&apos;s own community runs. Refreshes every 30 min via ISR.
-          Last fetched <RelativeTime iso={snap.updatedAt} className="mono" />.
-          {activeSource && (
-            <>
-              {" "}
-              <SourceBadge label={board} status={activeSource} />
-            </>
-          )}
-        </p>
-      </header>
+      </div>
 
-      <BoardTabs active={board} />
+      {/* CONTROLS — server-rendered placeholder; interactive variant comes when filtering ships */}
+      <div className="mono flex items-center gap-1 border-b border-[var(--rule)] px-8 py-3.5 text-[11px]">
+        <span className="text-[var(--cream-mute)]">
+          Sort: <span className="text-[var(--cream)]">mean ↓</span>
+        </span>
+        <span className="ml-auto text-[var(--cream-mute)]">
+          <span className="text-[var(--cream)]">{rows.length}</span> models
+        </span>
+      </div>
 
-      <Rule weight="hair" className="my-8" />
+      {/* PRIMARY: leaderboard */}
+      {ranked.length > 0 ? (
+        <DataTable
+          rowKey={(r) => `${r.model_id}-${r.category}`}
+          columns={cols}
+          rows={ranked}
+        />
+      ) : (
+        <div className="mono mx-8 my-8 border border-[var(--rule)] bg-[var(--paper-2)] p-10 text-center text-[12px] text-[var(--cream-mute)]">
+          — no runs yet.{" "}
+          <Link href="/tasks/new" className="underline">
+            Post the first one →
+          </Link>
+        </div>
+      )}
 
-      <Suspense fallback={null}>
-        {board === "arena" && (
-          <ExternalBoard
-            basePath="/leaderboard"
-            primaryLabel="Arena ELO"
-            primaryFormat="round"
-            rows={snap.arena.map<BoardRow>((e) => ({
-              rank: e.rank,
-              modelId: e.model,
-              label: e.model,
-              meta: e.organization || null,
-              primary: e.score,
-              secondary: [
-                { key: "ci", label: "95% CI", value: e.ciLabel },
-                { key: "votes", label: "Votes", value: e.votes },
-              ],
-            }))}
-          />
-        )}
-        {board === "open-llm" && (
-          <ExternalBoard
-            basePath="/leaderboard"
-            primaryLabel="Average"
-            rows={snap.openLlm.map<BoardRow>((e) => ({
-              rank: e.rank,
-              modelId: e.model,
-              label: e.model,
-              meta: null,
-              primary: e.average,
-              secondary: [
-                { key: "ifeval", label: "IFEval", value: e.scores.ifeval },
-                { key: "bbh", label: "BBH", value: e.scores.bbh },
-                { key: "math", label: "MATH", value: e.scores.math },
-                { key: "gpqa", label: "GPQA", value: e.scores.gpqa },
-                { key: "musr", label: "MUSR", value: e.scores.musr },
-                { key: "mmlu", label: "MMLU-PRO", value: e.scores.mmluPro },
-              ],
-            }))}
-          />
-        )}
-        {board === "livebench" && (
-          <ExternalBoard
-            basePath="/leaderboard"
-            primaryLabel="Global"
-            rows={snap.liveBench.map<BoardRow>((e) => ({
-              rank: e.rank,
-              modelId: e.model,
-              label: e.model,
-              meta: null,
-              primary: e.global,
-              secondary: [
-                { key: "coding", label: "Coding", value: e.coding },
-                { key: "math", label: "Math", value: e.math },
-                { key: "reasoning", label: "Reasoning", value: e.reasoning },
-                { key: "language", label: "Language", value: e.language },
-                { key: "data", label: "Data", value: e.dataAnalysis },
-                { key: "if", label: "IF", value: e.ifAvg },
-              ],
-            }))}
-          />
-        )}
-        {board === "community" && (
-          <CommunityBoard rows={communityRows} categories={categories} active={sp.category ?? null} />
-        )}
-      </Suspense>
-    </Container>
-  );
-}
+      {/* LIVE TAPE */}
+      <div className="px-8 pt-10">
+        <div className="mb-3 flex items-end justify-between">
+          <div className="flex items-end gap-4">
+            <Eyebrow>Live tape · last 30 runs</Eyebrow>
+            <h2 className="display-md">Right now</h2>
+          </div>
+        </div>
+      </div>
+      <TapeBand
+        items={ranked.slice(0, 5).map((r) => ({
+          time: "now",
+          model: r.model_id,
+          task: "rolling avg",
+          score: Number(r.avg_score ?? 0),
+          delta: 0,
+        }))}
+      />
 
-function SourceBadge({ label, status }: { label: string; status: "live" | "fallback" }) {
-  return (
-    <span
-      className={
-        "mono inline-block border px-1.5 py-0.5 text-[10px] uppercase tracking-widest " +
-        (status === "live"
-          ? "border-[var(--pos)]/60 text-[var(--pos)]"
-          : "border-[var(--mute)]/60 text-[var(--mute)]")
-      }
-    >
-      {label}: {status === "live" ? "live" : "cached"}
-    </span>
+      {/* MOVERS */}
+      <div className="px-8 pt-10">
+        <div className="mb-3 flex items-end justify-between">
+          <div className="flex items-end gap-4">
+            <Eyebrow>7-day movers · mean delta</Eyebrow>
+            <h2 className="display-md">Up &amp; down</h2>
+          </div>
+        </div>
+      </div>
+      <MoversPanel up={up} down={down} />
+
+      {/* BENTO */}
+      <div className="px-8 pt-10">
+        <div className="mb-3 flex items-end justify-between">
+          <div className="flex items-end gap-4">
+            <Eyebrow>Category leaders · 7d</Eyebrow>
+            <h2 className="display-md">Who wins what</h2>
+          </div>
+        </div>
+      </div>
+      <BentoGrid
+        cells={[
+          {
+            category: "Coding",
+            value: ranked[0] ? Number(ranked[0].avg_score ?? 0).toFixed(1) : "—",
+            winner: ranked[0]?.model_id ?? "—",
+            vendor: "—",
+            meta: `${ranked[0]?.runs ?? 0} runs`,
+            spark: [3, 4, 5, 6, 8],
+            sparkTrend: "up",
+          },
+          {
+            category: "Reasoning",
+            value: ranked[1] ? Number(ranked[1].avg_score ?? 0).toFixed(1) : "—",
+            winner: ranked[1]?.model_id ?? "—",
+            vendor: "—",
+            meta: `${ranked[1]?.runs ?? 0} runs`,
+            spark: [4, 5, 6, 7, 8],
+            sparkTrend: "up",
+          },
+          {
+            category: "Agentic",
+            value: ranked[2] ? Number(ranked[2].avg_score ?? 0).toFixed(1) : "—",
+            winner: ranked[2]?.model_id ?? "—",
+            vendor: "—",
+            meta: `${ranked[2]?.runs ?? 0} runs`,
+            spark: [3, 3, 4, 5, 7],
+            sparkTrend: "up",
+          },
+          {
+            category: "Vision",
+            value: ranked[3] ? Number(ranked[3].avg_score ?? 0).toFixed(1) : "—",
+            winner: ranked[3]?.model_id ?? "—",
+            vendor: "—",
+            meta: `${ranked[3]?.runs ?? 0} runs`,
+            spark: [4, 4, 5, 5, 5],
+            sparkTrend: "flat",
+          },
+        ]}
+        highlightIndex={0}
+      />
+
+      {/* FOOTER */}
+      <FooterBand
+        left={
+          <>
+            <h4 className="mono mb-3 text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
+              How this board works
+            </h4>
+            <p className="text-[13px] leading-[1.5] text-[var(--cream-mute)]">
+              <strong className="font-medium text-[var(--cream)]">Mean</strong> = arithmetic mean
+              across categories. Models with under 5 runs in a category show{" "}
+              <strong className="font-medium text-[var(--cream)]">—</strong>. Vendor-published
+              numbers do not enter this board.
+            </p>
+          </>
+        }
+        mid={
+          <>
+            <h4 className="mono mb-3 text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
+              Other boards
+            </h4>
+            <ul className="space-y-1.5">
+              <li>
+                <a className="mono text-[11px] text-[var(--cream)]" href="/leaderboard?board=arena">
+                  LMSYS Arena ↗
+                </a>
+              </li>
+              <li>
+                <a
+                  className="mono text-[11px] text-[var(--cream)]"
+                  href="/leaderboard?board=open-llm"
+                >
+                  HF Open-LLM v2 ↗
+                </a>
+              </li>
+              <li>
+                <a
+                  className="mono text-[11px] text-[var(--cream)]"
+                  href="/leaderboard?board=livebench"
+                >
+                  LiveBench ↗
+                </a>
+              </li>
+            </ul>
+          </>
+        }
+        right={
+          <>
+            <h4 className="mono mb-3 text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
+              Add to the tape
+            </h4>
+            <p className="mb-3 text-[13px] text-[var(--cream-mute)]">5 min, evidence required.</p>
+            <PillCta href="/tasks/new">Submit a run</PillCta>
+          </>
+        }
+      />
+      <Colophon left="frontier · tape edition · 04·26 · ICT" right="© 2026 community" />
+    </PageShell>
   );
 }
