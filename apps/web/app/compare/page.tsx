@@ -4,7 +4,6 @@ import { Rule } from "@/components/shared/rule";
 import { CompareBoard } from "@/components/compare/compare-board";
 import { CompareVerdict } from "@/components/compare/compare-verdict";
 import { ComparePicker } from "@/components/compare/compare-picker";
-import { ModelSpecGrid } from "@/components/home/model-spec-grid";
 import { BENCHMARKS } from "@/lib/data/benchmarks";
 import { loadLeaderboardSnapshot } from "@/lib/data/external/leaderboards";
 
@@ -97,7 +96,9 @@ export default async function ComparePage({ searchParams }: { searchParams: Sear
         <Eyebrow>Spec sheet</Eyebrow>
         <h2 className="display mt-3 text-3xl tracking-tight md:text-4xl">Architecture &amp; price.</h2>
       </header>
-      <ModelSpecGrid />
+      <p className="mono py-8 text-center text-xs uppercase tracking-widest text-[var(--mute)]">
+        — section pending visual identity rebuild
+      </p>
     </Container>
   );
 }

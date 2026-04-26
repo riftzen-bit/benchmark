@@ -3,9 +3,6 @@ import { Container } from "@/components/shared/container";
 import { Eyebrow } from "@/components/shared/eyebrow";
 import { Rule } from "@/components/shared/rule";
 import { ModelLabel } from "@/components/shared/model-mark";
-import { TrendingModels } from "@/components/home/trending-models";
-import { ModelSpecGrid } from "@/components/home/model-spec-grid";
-import { fetchTrendingHFModels } from "@/lib/data/external/huggingface";
 import { listVisibleModels } from "@/lib/db/queries/models";
 import { listLeaderboard } from "@/lib/db/queries/leaderboard";
 import { vendorLabel } from "@/lib/data/vendors";
@@ -14,8 +11,7 @@ export const metadata = { title: "Models" };
 export const dynamic = "force-dynamic";
 
 export default async function ModelsPage() {
-  const [trending, dbModels, leaderboard] = await Promise.all([
-    fetchTrendingHFModels({ limit: 12 }),
+  const [dbModels, leaderboard] = await Promise.all([
     listVisibleModels().catch(() => []),
     listLeaderboard().catch(() => []),
   ]);
@@ -35,8 +31,7 @@ export default async function ModelsPage() {
           </h1>
         </div>
         <p className="max-w-prose text-base leading-relaxed text-[var(--mute)]">
-          Featured frontier models on top, then live trending feed from the Hugging Face Hub
-          ({trending.length} entries), then the local registry with community run counts.
+          Featured frontier models on top, then the local registry with community run counts.
         </p>
       </header>
 
@@ -52,25 +47,12 @@ export default async function ModelsPage() {
             Head-to-head →
           </Link>
         </header>
-        <ModelSpecGrid />
+        <p className="mono py-8 text-center text-xs uppercase tracking-widest text-[var(--mute)]">
+          — section pending visual identity rebuild
+        </p>
       </section>
 
       <Rule weight="hair" className="my-16" />
-
-      <section className="grid gap-6">
-        <header className="flex items-baseline justify-between gap-4">
-          <Eyebrow>Hugging Face &middot; trending right now</Eyebrow>
-          <a
-            href="https://huggingface.co/models?sort=trending"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mono text-xs uppercase tracking-widest text-[var(--mute)] underline decoration-[var(--rule)] underline-offset-4 hover:decoration-[var(--accent)]"
-          >
-            On HF &nearr;
-          </a>
-        </header>
-        <TrendingModels models={trending} />
-      </section>
 
       <Rule weight="hair" className="my-16" />
 

@@ -3,7 +3,6 @@ import { Brand } from "@/components/layout/brand";
 import { Eyebrow } from "@/components/shared/eyebrow";
 import { Rule } from "@/components/shared/rule";
 import { ModelDot } from "@/components/shared/model-mark";
-import { IssueTape } from "@/components/home/issue-tape";
 import { BENCHMARKS } from "@/lib/data/benchmarks";
 import { SOURCES } from "@/lib/data/sources";
 import { tallyOf } from "@/lib/utils/aggregate";
@@ -94,7 +93,9 @@ export function AuthRail() {
       </div>
 
       <div className="relative -mx-8 md:-mx-12">
-        <IssueTape />
+        <p className="mono py-8 text-center text-xs uppercase tracking-widest text-[var(--mute)]">
+          — section pending visual identity rebuild
+        </p>
       </div>
     </aside>
   );

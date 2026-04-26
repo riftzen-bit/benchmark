@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Container } from "@/components/shared/container";
 import { Eyebrow } from "@/components/shared/eyebrow";
 import { Rule } from "@/components/shared/rule";
-import { TrendingModels } from "@/components/home/trending-models";
 import { PulseStats } from "@/components/pulse/pulse-stats";
 import { PulseFilters } from "@/components/pulse/pulse-filters";
 import { PulseTable } from "@/components/pulse/pulse-table";
@@ -55,7 +54,9 @@ export default async function PulsePage() {
           <header>
             <Eyebrow>Trending on HF</Eyebrow>
           </header>
-          <TrendingModels models={snap.hf.slice(0, 6)} />
+          <p className="mono py-8 text-center text-xs uppercase tracking-widest text-[var(--mute)]">
+            — section pending visual identity rebuild
+          </p>
         </aside>
       </div>
 
