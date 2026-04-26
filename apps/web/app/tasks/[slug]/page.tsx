@@ -80,7 +80,27 @@ export default async function TaskDetail({ params }: { params: Promise<{ slug: s
           <Eyebrow>Runs ({runs.length})</Eyebrow>
         </header>
         {runs.length === 0 ? (
-          <p className="text-sm text-[var(--mute)]">No runs yet.</p>
+          <div className="grid gap-4 border border-[var(--rule)] p-5">
+            <p className="mono text-[10px] uppercase tracking-widest text-[var(--mute)]">
+              How to submit
+            </p>
+            <ol className="grid gap-2 text-sm">
+              <li>
+                <span className="mono text-[var(--accent)]">01</span>{" "}
+                Pick a model from the local registry on the right.
+              </li>
+              <li>
+                <span className="mono text-[var(--accent)]">02</span>{" "}
+                Run the prompt on{" "}
+                <Link href="/test-yourself" className="underline">a public playground</Link>{" "}
+                and paste the output URL or screenshot.
+              </li>
+              <li>
+                <span className="mono text-[var(--accent)]">03</span>{" "}
+                Score the run against the rubric and submit.
+              </li>
+            </ol>
+          </div>
         ) : (
           <table className="tnum w-full border-y border-[var(--rule)] text-sm">
             <thead>
