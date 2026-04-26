@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PageShell } from "@/components/ui/identity/page-shell";
 import { NavPill } from "@/components/ui/identity/nav-pill";
 import { CornerStats } from "@/components/ui/identity/corner-stats";
@@ -27,7 +28,8 @@ const NAV = [
   { href: "/pulse", label: "Pulse" },
 ];
 
-type Row = { model_id: string; avg_score: number | null; runs: number };
+type LeaderboardEntry = Awaited<ReturnType<typeof listLeaderboard>>[number];
+type RankedEntry = LeaderboardEntry & { _rank: number };
 
 export default async function HomePage() {
   const [tasks, leaderboard] = await Promise.all([
@@ -35,13 +37,13 @@ export default async function HomePage() {
     listLeaderboard().catch(() => []),
   ]);
 
-  const totalRuns = leaderboard.reduce((n, r) => n + (r as Row).runs, 0);
-  const top5 = (leaderboard as Row[]).slice(0, 5);
-  const { up, down } = deriveMovers(leaderboard as never);
+  const totalRuns = leaderboard.reduce((n, r) => n + r.runs, 0);
+  const top5: RankedEntry[] = leaderboard.slice(0, 5).map((r, i) => ({ ...r, _rank: i + 1 }));
+  const { up, down } = deriveMovers(leaderboard);
   const topScore = top5[0]?.avg_score ?? 0;
 
-  const bandCols: Column<Row>[] = [
-    { key: "rank", header: "#", align: "left", render: (_r) => "" /* filled below */ },
+  const bandCols: Column<RankedEntry>[] = [
+    { key: "rank", header: "#", align: "left", render: (r) => <span className="text-[11px] text-[var(--cream-mute)]">{String(r._rank).padStart(2, "0")}</span> },
     { key: "model_id", header: "Model", align: "left", render: (r) => <span className="font-semibold text-[var(--cream)] [font-family:var(--font-sans)]">{r.model_id}</span> },
     { key: "score", header: "Avg", align: "right", render: (r) => <ScoreBar value={Number(r.avg_score ?? 0)} /> },
     { key: "runs", header: "Runs", align: "right", render: (r) => String(r.runs) },
@@ -68,7 +70,7 @@ export default async function HomePage() {
       {/* HERO BAND — cinematic */}
       <div className="relative h-[92vh] overflow-hidden border-b border-[var(--rule)]">
         {/* tape backdrop */}
-        <div className="absolute inset-0 px-10 pb-10 pt-20 opacity-55">
+        <div aria-hidden="true" className="absolute inset-0 px-10 pb-10 pt-20 opacity-55">
           <div data-scroll-y className="[animation:scroll-y_90s_linear_infinite]">
             {[...Array(2)].map((_, dup) => (
               <div key={dup}>
@@ -89,7 +91,7 @@ export default async function HomePage() {
         {/* gradient mask */}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,11,0.65)_0%,rgba(10,10,11,0.2)_30%,rgba(10,10,11,0.4)_70%,rgba(10,10,11,0.92)_100%)]" />
         {/* ghost stat */}
-        <div className="mono pointer-events-none absolute right-[6%] top-[38%] text-[240px] font-bold leading-none tracking-[-0.04em] text-[rgba(225,224,204,0.04)]">
+        <div aria-hidden="true" className="mono pointer-events-none absolute right-[6%] top-[38%] text-[240px] font-bold leading-none tracking-[-0.04em] text-[rgba(225,224,204,0.04)]">
           {Number(topScore).toFixed(1)}
         </div>
 
@@ -130,18 +132,18 @@ export default async function HomePage() {
             <Eyebrow>Top of the board · 7d</Eyebrow>
             <h2 className="display-md">Frontier five</h2>
           </div>
-          <a href="/leaderboard" className="mono text-[11px] uppercase tracking-[0.14em] text-[var(--cream-mute)] hover:text-[var(--cream)]">
+          <Link href="/leaderboard" className="mono text-[11px] uppercase tracking-[0.14em] text-[var(--cream-mute)] hover:text-[var(--cream)]">
             Open full board →
-          </a>
+          </Link>
         </div>
       </div>
       {top5.length > 0 ? (
         <div className="px-2">
-          <DataTable rowKey={(r) => r.model_id} columns={bandCols} rows={top5} />
+          <DataTable rowKey={(r) => `${r.model_id}-${r.category}`} columns={bandCols} rows={top5} />
         </div>
       ) : (
         <div className="mono mx-8 mb-8 mt-2 border border-[var(--rule)] bg-[var(--paper-2)] p-8 text-center text-[12px] text-[var(--cream-mute)]">
-          — no runs yet. <a href="/tasks/new" className="underline">Post the first one →</a>
+          — no runs yet. <Link href="/tasks/new" className="underline">Post the first one →</Link>
         </div>
       )}
 
