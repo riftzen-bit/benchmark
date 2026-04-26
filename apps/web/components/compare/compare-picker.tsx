@@ -45,10 +45,10 @@ export function ComparePicker({ selected, max = 6 }: Props) {
             key={o.id}
             type="button"
             onClick={() => toggle(o.id)}
-            className={`mono border px-2 py-1 text-xs uppercase tracking-widest transition-colors ${
+            className={`mono border px-2.5 py-1 text-[11px] uppercase tracking-[0.14em] transition-colors ${
               on
-                ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--background)]"
-                : "border-[var(--rule)] text-[var(--mute)] hover:text-[var(--foreground)]"
+                ? "border-[var(--cream)] bg-[var(--cream)] text-[var(--paper)]"
+                : "border-[var(--rule)] text-[var(--cream-mute)] hover:border-[var(--cream)] hover:text-[var(--cream)]"
             }`}
             aria-pressed={on}
           >

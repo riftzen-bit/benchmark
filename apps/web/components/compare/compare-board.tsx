@@ -80,8 +80,8 @@ export function CompareBoard({ rows }: Props) {
                   onClick={() => setSort(b.key)}
                   className={
                     active
-                      ? "mono border border-[var(--foreground)] bg-[var(--foreground)] px-2.5 py-1 text-[11px] uppercase tracking-widest text-[var(--background)]"
-                      : "mono border border-[var(--rule)] px-2.5 py-1 text-[11px] uppercase tracking-widest text-[var(--mute)] transition-colors hover:border-[var(--foreground)] hover:text-[var(--foreground)]"
+                      ? "mono border border-[var(--cream)] bg-[var(--cream)] px-2.5 py-1 text-[11px] uppercase tracking-[0.14em] text-[var(--paper)]"
+                      : "mono border border-[var(--rule)] px-2.5 py-1 text-[11px] uppercase tracking-[0.14em] text-[var(--cream-mute)] transition-colors hover:border-[var(--cream)] hover:text-[var(--cream)]"
                   }
                 >
                   {b.label}
@@ -99,7 +99,7 @@ export function CompareBoard({ rows }: Props) {
       </ul>
 
       {display.length === 0 && (
-        <p className="text-sm text-[var(--mute)]">
+        <p className="text-sm text-[var(--cream-mute)]">
           No benchmarks in this category yet.
         </p>
       )}
@@ -119,12 +119,12 @@ function CompareRow({ row, maxAdvantage }: CompareRowProps) {
   const delta = deltaOf(row.opus, row.gpt);
 
   return (
-    <li className="grid grid-cols-1 gap-3 border border-[var(--rule)] p-4 transition-colors hover:border-[var(--foreground)] md:grid-cols-[2fr_3fr_1.4fr] md:items-center md:gap-6">
+    <li className="grid grid-cols-1 gap-3 border border-[var(--rule)] bg-[var(--paper-2)] p-4 transition-colors hover:border-[var(--cream)] md:grid-cols-[2fr_3fr_1.4fr] md:items-center md:gap-6">
       <div className="min-w-0">
-        <p className="mono text-[10px] uppercase tracking-widest text-[var(--mute)]">
+        <p className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
           {row.category}
         </p>
-        <p className="mt-0.5 text-base font-medium leading-snug">
+        <p className="mt-0.5 text-[14px] font-semibold leading-snug tracking-[-0.01em] text-[var(--cream)]">
           {row.label}
           <SourceCite ids={row.sourceIds} />
         </p>
@@ -133,22 +133,22 @@ function CompareRow({ row, maxAdvantage }: CompareRowProps) {
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3" aria-label="Score gap">
         <BarSide
           align="right"
-          color="var(--opus)"
+          color="var(--pos)"
           show={advantage > 0}
           pct={advantage > 0 ? pct : 0}
           score={formatScore(row.opus, row.unit)}
-          tone={winner === "opus" ? "text-[var(--opus)]" : "text-[var(--mute)]"}
+          tone={winner === "opus" ? "text-[var(--pos)]" : "text-[var(--cream-mute)]"}
         />
-        <span aria-hidden className="mono text-[10px] uppercase tracking-widest text-[var(--mute)]">
+        <span aria-hidden className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
           vs
         </span>
         <BarSide
           align="left"
-          color="var(--gpt)"
+          color="var(--neg)"
           show={advantage < 0}
           pct={advantage < 0 ? pct : 0}
           score={formatScore(row.gpt, row.unit)}
-          tone={winner === "gpt" ? "text-[var(--gpt)]" : "text-[var(--mute)]"}
+          tone={winner === "gpt" ? "text-[var(--neg)]" : "text-[var(--cream-mute)]"}
         />
       </div>
 
@@ -157,16 +157,16 @@ function CompareRow({ row, maxAdvantage }: CompareRowProps) {
           className={
             "mono text-base tabular-nums " +
             (winner === "opus"
-              ? "text-[var(--opus)]"
+              ? "text-[var(--pos)]"
               : winner === "gpt"
-                ? "text-[var(--gpt)]"
-                : "text-[var(--mute)]")
+                ? "text-[var(--neg)]"
+                : "text-[var(--cream-mute)]")
           }
         >
           Δ {formatDelta(delta)}
           {row.unit === "%" ? " pts" : ""}
         </p>
-        <p className="mono text-[10px] uppercase tracking-widest text-[var(--mute)]">
+        <p className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
           {winner === "opus"
             ? "Opus leads"
             : winner === "gpt"
@@ -197,7 +197,7 @@ function BarSide({ align, color, show, pct, score, tone }: BarSideProps) {
       )}
       <div
         aria-hidden
-        className="relative h-2 flex-1 bg-[var(--rule)]/40"
+        className="relative h-2 flex-1 bg-[var(--rule)]"
         style={align === "right" ? { transform: "scaleX(-1)" } : undefined}
       >
         {show && (

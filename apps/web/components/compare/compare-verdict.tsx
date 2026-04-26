@@ -1,6 +1,5 @@
 import type { BenchmarkRow } from "@/lib/schema/benchmark";
 import { tallyOf } from "@/lib/utils/aggregate";
-import { Eyebrow } from "@/components/shared/eyebrow";
 
 interface Props {
   rows: ReadonlyArray<BenchmarkRow>;
@@ -14,22 +13,21 @@ export function CompareVerdict({ rows }: Props) {
   const tiePct = decided ? (t.tie / decided) * 100 : 0;
 
   return (
-    <section aria-label="Verdict" className="grid gap-6">
-      <header className="flex items-baseline justify-between gap-4">
-        <Eyebrow>Verdict bar &middot; cited benchmarks only</Eyebrow>
-        <span className="mono text-[10px] uppercase tracking-widest text-[var(--mute)]">
+    <section aria-label="Verdict" className="grid gap-5">
+      <div className="flex items-baseline justify-end">
+        <span className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">
           {decided}/{t.total} decided &middot; {t.na} n/a
         </span>
-      </header>
+      </div>
 
       <div
         role="img"
         aria-label={`Opus leads ${t.opus}, ties ${t.tie}, GPT leads ${t.gpt}.`}
         className="flex h-3 w-full overflow-hidden border border-[var(--rule)]"
       >
-        <span style={{ width: `${opusPct}%` }} className="bg-[var(--opus)]" />
-        <span style={{ width: `${tiePct}%` }} className="bg-[var(--rule)]" />
-        <span style={{ width: `${gptPct}%` }} className="bg-[var(--gpt)]" />
+        <span style={{ width: `${opusPct}%` }} className="bg-[var(--pos)]" />
+        <span style={{ width: `${tiePct}%` }} className="bg-[var(--cream-dim)]" />
+        <span style={{ width: `${gptPct}%` }} className="bg-[var(--neg)]" />
       </div>
 
       <dl className="grid grid-cols-3 gap-px overflow-hidden border border-[var(--rule)] bg-[var(--rule)]">
@@ -49,20 +47,20 @@ interface CellProps {
 }
 
 const TONE: Record<CellProps["side"], string> = {
-  opus: "text-[var(--opus)]",
-  gpt: "text-[var(--gpt)]",
-  tie: "text-[var(--mute)]",
+  opus: "text-[var(--pos)]",
+  gpt: "text-[var(--neg)]",
+  tie: "text-[var(--cream-mute)]",
 };
 
 function Cell({ label, value, pct, side }: CellProps) {
   return (
-    <div className="bg-[var(--background)] px-5 py-4">
-      <dt className="eyebrow">{label}</dt>
+    <div className="bg-[var(--paper)] px-5 py-4">
+      <dt className="mono text-[10px] uppercase tracking-[0.14em] text-[var(--cream-mute)]">{label}</dt>
       <dd
-        className={`figure mt-2 flex items-baseline gap-3 text-3xl tabular-nums md:text-4xl ${TONE[side]}`}
+        className={`mono mt-2 flex items-baseline gap-3 text-3xl font-semibold leading-none tabular-nums tracking-[-0.02em] md:text-4xl ${TONE[side]}`}
       >
         <span>{value}</span>
-        <span className="mono text-xs text-[var(--mute)]">
+        <span className="mono text-xs font-normal text-[var(--cream-mute)]">
           {pct.toFixed(0)}%
         </span>
       </dd>
