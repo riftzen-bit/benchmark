@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/layout/theme-provider";
-import { SiteHeader } from "@/components/layout/site-header";
-import { SiteFooter } from "@/components/layout/site-footer";
 import { SITE } from "@/lib/config/site";
 
 const sans = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans-loaded",
-  axes: ["opsz"],
+  weight: ["400", "500", "600", "700"],
 });
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-mono-loaded",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -25,18 +23,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${sans.variable} ${mono.variable}`}
-    >
-      <body className="min-h-screen antialiased">
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <SiteHeader />
-          <main className="min-h-[calc(100vh-3.5rem)]">{children}</main>
-          <SiteFooter />
-        </ThemeProvider>
-      </body>
+    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }
