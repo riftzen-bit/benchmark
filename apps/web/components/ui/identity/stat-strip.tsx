@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type Tone = "pos" | "neg" | "mute";
+export type Tone = "pos" | "neg" | "mute";
 export type Stat = { label: string; value: string; sub?: string; subTone?: Tone };
 
 const toneClass: Record<Tone, string> = {
