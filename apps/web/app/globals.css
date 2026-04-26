@@ -48,7 +48,6 @@
     text-rendering: optimizeLegibility;
   }
   body { padding: 16px; }
-  @media (min-width: 768px) { body { padding: 16px; } }
   @media (max-width: 480px) { body { padding: 8px; } }
 }
 
@@ -69,7 +68,7 @@
   to   { transform: translateX(-50%); }
 }
 
-.tnum, table, .num, .mono {
+.tnum, .num, .mono {
   font-feature-settings: "tnum" 1, "lnum" 1, "ss01" 1;
 }
 .mono { font-family: var(--font-mono); }
