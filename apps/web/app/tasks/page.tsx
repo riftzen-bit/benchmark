@@ -166,7 +166,7 @@ function EmptyState({ user }: { user: boolean }) {
               </Link>
             ) : (
               <Link
-                href={`/sign-in?next=/tasks/new?template=${t.slug}`}
+                href={`/sign-in?next=${encodeURIComponent(`/tasks/new?template=${t.slug}`)}`}
                 className="mono text-xs uppercase tracking-widest underline decoration-[var(--rule)] underline-offset-4"
               >
                 Sign in →
