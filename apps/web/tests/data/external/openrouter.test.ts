@@ -107,4 +107,20 @@ describe("fetchOpenRouterModels", () => {
     expect(tiny.length).toBe(1);
     expect(big.length).toBe(OPENROUTER_FALLBACK.length);
   });
+
+  it("returns the fallback when the response status is not ok", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 429,
+          json: async () => ({ data: [] }),
+        } as Response),
+      ),
+    );
+    const out = await fetchOpenRouterModels({ limit: 5 });
+    expect(out.length).toBe(5);
+    expect(out[0]?.id).toBe(OPENROUTER_FALLBACK[0]?.id);
+  });
 });

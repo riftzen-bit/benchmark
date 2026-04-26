@@ -100,8 +100,7 @@ export async function fetchOpenRouterModels(
     for (const raw of wrapper.data.data) {
       const parsed = RawModelSchema.safeParse(raw);
       if (!parsed.success) continue;
-      const m = toModel(parsed.data);
-      if (m) out.push(m);
+      out.push(toModel(parsed.data));
     }
     if (out.length === 0) return FALLBACK.slice(0, limit);
     return Object.freeze(out.slice(0, limit));
@@ -110,7 +109,7 @@ export async function fetchOpenRouterModels(
   }
 }
 
-function toModel(r: z.infer<typeof RawModelSchema>): OpenRouterModel | null {
+function toModel(r: z.infer<typeof RawModelSchema>): OpenRouterModel {
   const id = r.id;
   const [vendor, family] = id.includes("/") ? id.split("/") : ["", id];
   const ctx = r.context_length ?? null;
