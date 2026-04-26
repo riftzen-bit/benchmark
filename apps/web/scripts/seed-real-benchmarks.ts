@@ -147,6 +147,7 @@ type ScoreRow = { model: string; benchmark: string; score: number; evidenceUrl: 
 
 const SCORES: ScoreRow[] = [
   // ── SWE-bench Verified ────────────────────────────────────────────────
+  { model: "claude-sonnet-4-6",     benchmark: "swe-bench-verified", score: 79.2, evidenceUrl: "https://www.anthropic.com/news/claude-sonnet-4-6" },
   { model: "claude-opus-4-5",       benchmark: "swe-bench-verified", score: 80.9, evidenceUrl: "https://www.anthropic.com/news/claude-opus-4-5" },
   { model: "claude-sonnet-4-5",     benchmark: "swe-bench-verified", score: 77.2, evidenceUrl: "https://www.anthropic.com/news/claude-sonnet-4-5" },
   { model: "claude-haiku-4-5",      benchmark: "swe-bench-verified", score: 73.3, evidenceUrl: "https://www.anthropic.com/news/claude-haiku-4-5" },
@@ -246,8 +247,11 @@ const SCORES: ScoreRow[] = [
   { model: "deepseek-r1-0528",      benchmark: "livebench",          score: 70.2, evidenceUrl: "https://livebench.ai/" },
   { model: "qwen3-235b-a22b",       benchmark: "livebench",          score: 65.9, evidenceUrl: "https://livebench.ai/" },
 
-  // ── LMSYS Arena ELO (raw scaled to 0-100; raw / 15) ───────────────────
-  // Snapshot late 2025; raw ELO was ~1380-1450 for top frontier.
+  // ── LMSYS Arena ELO (raw scaled to 0-100; raw / 15, clamp 100) ───────
+  // Snapshot 2026-Q1 from arena.ai; raw ELO ~1380-1503 for top frontier.
+  { model: "claude-sonnet-4-6",     benchmark: "arena-elo",          score: 100.0, evidenceUrl: "https://arena.ai/leaderboard", note: "raw 1503" },
+  { model: "claude-opus-4-6",       benchmark: "arena-elo",          score: 99.7, evidenceUrl: "https://arena.ai/leaderboard", note: "raw 1496" },
+  { model: "claude-opus-4-7",       benchmark: "arena-elo",          score: 99.6, evidenceUrl: "https://arena.ai/leaderboard", note: "raw 1494" },
   { model: "claude-opus-4-5",       benchmark: "arena-elo",          score: 95.3, evidenceUrl: "https://lmarena.ai/", note: "raw 1430" },
   { model: "gpt-5",                 benchmark: "arena-elo",          score: 96.0, evidenceUrl: "https://lmarena.ai/", note: "raw 1440" },
   { model: "gpt-5.1",               benchmark: "arena-elo",          score: 96.7, evidenceUrl: "https://lmarena.ai/", note: "raw 1450" },
