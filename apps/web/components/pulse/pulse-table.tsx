@@ -161,7 +161,6 @@ function compareBy(a: OpenRouterModel, b: OpenRouterModel, key: SortKey): number
 function fmtPrice(n: number | null): string {
   if (n == null) return "—";
   if (n === 0) return "free";
-  if (n < 1) return n.toFixed(2);
   return n.toFixed(2);
 }
 
