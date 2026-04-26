@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Frontier — hero v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #18181b; font-family: 'Inter', sans-serif; }
+  .stage { padding: 16px; }
+  .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; text-transform: uppercase; letter-spacing: .12em; padding: 8px 4px; }
+
+  .frame { position: relative; height: 92vh; width: 100%; border-radius: 28px; overflow: hidden; background: #0A0A0B; }
+
+  /* Background tape */
+  .tape-bg { position: absolute; inset: 0; padding: 80px 40px 40px; opacity: .55; }
+  .tape-row { display: grid; grid-template-columns: 110px 1fr 80px 60px 80px; gap: 24px; padding: 6px 0; border-bottom: 1px solid rgba(225,224,204,.06); font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #E1E0CC; }
+  .tape-bg .scroller { animation: scrollUp 90s linear infinite; }
+  @keyframes scrollUp { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  .tape-row .pos { color: #5eead4; }
+  .tape-row .neg { color: #f97171; }
+  .tape-row .mute { color: rgba(225,224,204,.45); }
+
+  .blur-mask { position: absolute; inset: 0; backdrop-filter: blur(0.6px); background: linear-gradient(180deg, rgba(10,10,11,.65) 0%, rgba(10,10,11,.2) 30%, rgba(10,10,11,.4) 70%, rgba(10,10,11,.92) 100%); }
+  .noise { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.88  0 0 0 0 0.88  0 0 0 0 0.80  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); pointer-events: none; }
+
+  /* Nav */
+  nav.pill { position: absolute; left: 50%; top: 0; transform: translateX(-50%); z-index: 20; }
+  nav.pill .inner { display: flex; align-items: center; gap: 28px; background: #000; padding: 11px 22px; border-radius: 0 0 22px 22px; }
+  nav.pill a { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: rgba(225,224,204,.7); text-decoration: none; transition: color .2s; }
+  nav.pill a:hover { color: #E1E0CC; }
+  nav.pill .dot { width: 5px; height: 5px; background: #5eead4; border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+  /* Top corners */
+  .corner { position: absolute; top: 18px; z-index: 10; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(225,224,204,.55); text-transform: uppercase; letter-spacing: .14em; }
+  .corner.l { left: 28px; }
+  .corner.r { right: 28px; text-align: right; }
+  .corner .v { color: #E1E0CC; font-weight: 600; }
+
+  /* Hero text */
+  .hero-content { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 32px 18px; z-index: 10; }
+  .grid { display: grid; grid-template-columns: 8fr 4fr; gap: 32px; align-items: end; }
+  .display { color: #E1E0CC; font-weight: 500; font-size: 22vw; letter-spacing: -0.07em; line-height: 0.85; position: relative; }
+  .display .star { font-size: 0.18em; vertical-align: super; margin-left: 0.04em; color: #E1E0CC; }
+  .pitch { color: rgba(225,224,204,.72); font-size: 14px; line-height: 1.35; max-width: 320px; padding-bottom: 28px; }
+  .cta { display: inline-flex; align-items: center; gap: 8px; align-self: start; background: #E1E0CC; color: #0A0A0B; padding: 6px 6px 6px 22px; border-radius: 999px; font-weight: 600; font-size: 14px; border: 0; cursor: pointer; transition: gap .2s; }
+  .cta:hover { gap: 14px; }
+  .cta .arrow-bubble { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #0A0A0B; color: #E1E0CC; border-radius: 50%; transition: transform .2s; }
+  .cta:hover .arrow-bubble { transform: scale(1.08); }
+
+  /* Footnote anchor */
+  .foot { position: absolute; bottom: 16px; right: 28px; z-index: 10; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(225,224,204,.45); max-width: 280px; text-align: right; line-height: 1.4; }
+
+  /* Pulsing big stat behind */
+  .ghost-stat { position: absolute; top: 38%; right: 6%; z-index: 1; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 240px; line-height: 1; color: rgba(225,224,204,.04); letter-spacing: -0.04em; pointer-events: none; }
+
+  .word-up { display: inline-block; animation: wordUp .9s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes wordUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style></head>
+<body>
+
+<div class="stage">
+  <div class="label">Frontier · landing hero · adapted from Prisma → benchmark site</div>
+
+  <div class="frame">
+    <!-- live tape behind -->
+    <div class="tape-bg">
+      <div class="scroller">
+        <!-- repeated rows -->
+        <div class="tape-row"><span class="mute">14:42:08</span><span>claude-opus-4-7 · swe-bench-pro</span><span>64.3</span><span class="pos">+0.4</span><span class="mute">aria_w</span></div>
+        <div class="tape-row"><span class="mute">14:41:55</span><span>gpt-5.5 · terminal-bench-2</span><span>82.7</span><span class="pos">+1.1</span><span class="mute">tnguyen</span></div>
+        <div class="tape-row"><span class="mute">14:41:32</span><span>gemini-3-pro · gpqa-diamond</span><span>91.0</span><span class="neg">-0.6</span><span class="mute">k_ho</span></div>
+        <div class="tape-row"><span class="mute">14:41:18</span><span>llama-4-405b · finance-agent</span><span>58.2</span><span class="pos">+2.0</span><span class="mute">marcus</span></div>
+        <div class="tape-row"><span class="mute">14:41:02</span><span>claude-opus-4-7 · mmmlu</span><span>91.5</span><span class="mute">±0.0</span><span class="mute">aria_w</span></div>
+        <div class="tape-row"><span class="mute">14:40:48</span><span>gpt-5.5 · browsecomp</span><span>84.4</span><span class="neg">-0.2</span><span class="mute">l_pham</span></div>
+        <div class="tape-row"><span class="mute">14:40:33</span><span>opus-4-7 · finance-agent-v1</span><span>64.4</span><span class="pos">+1.8</span><span class="mute">tnguyen</span></div>
+        <div class="tape-row"><span class="mute">14:40:11</span><span>gpt-5.5 · cybergym</span><span>81.8</span><span class="pos">+0.3</span><span class="mute">k_ho</span></div>
+        <div class="tape-row"><span class="mute">14:39:54</span><span>opus-4-7 · hle-no-tools</span><span>46.9</span><span class="neg">-0.1</span><span class="mute">aria_w</span></div>
+        <div class="tape-row"><span class="mute">14:39:30</span><span>gemini-3-pro · mcp-atlas</span><span>74.1</span><span class="pos">+0.9</span><span class="mute">marcus</span></div>
+        <div class="tape-row"><span class="mute">14:39:12</span><span>llama-4 · gpqa-diamond</span><span>78.2</span><span class="neg">-1.4</span><span class="mute">l_pham</span></div>
+        <div class="tape-row"><span class="mute">14:38:55</span><span>opus-4-7 · swe-bench-verified</span><span>87.6</span><span class="mute">±0.0</span><span class="mute">tnguyen</span></div>
+        <!-- duplicate for infinite scroll -->
+        <div class="tape-row"><span class="mute">14:42:08</span><span>claude-opus-4-7 · swe-bench-pro</span><span>64.3</span><span class="pos">+0.4</span><span class="mute">aria_w</span></div>
+        <div class="tape-row"><span class="mute">14:41:55</span><span>gpt-5.5 · terminal-bench-2</span><span>82.7</span><span class="pos">+1.1</span><span class="mute">tnguyen</span></div>
+        <div class="tape-row"><span class="mute">14:41:32</span><span>gemini-3-pro · gpqa-diamond</span><span>91.0</span><span class="neg">-0.6</span><span class="mute">k_ho</span></div>
+        <div class="tape-row"><span class="mute">14:41:18</span><span>llama-4-405b · finance-agent</span><span>58.2</span><span class="pos">+2.0</span><span class="mute">marcus</span></div>
+        <div class="tape-row"><span class="mute">14:41:02</span><span>claude-opus-4-7 · mmmlu</span><span>91.5</span><span class="mute">±0.0</span><span class="mute">aria_w</span></div>
+        <div class="tape-row"><span class="mute">14:40:48</span><span>gpt-5.5 · browsecomp</span><span>84.4</span><span class="neg">-0.2</span><span class="mute">l_pham</span></div>
+        <div class="tape-row"><span class="mute">14:40:33</span><span>opus-4-7 · finance-agent-v1</span><span>64.4</span><span class="pos">+1.8</span><span class="mute">tnguyen</span></div>
+        <div class="tape-row"><span class="mute">14:40:11</span><span>gpt-5.5 · cybergym</span><span>81.8</span><span class="pos">+0.3</span><span class="mute">k_ho</span></div>
+        <div class="tape-row"><span class="mute">14:39:54</span><span>opus-4-7 · hle-no-tools</span><span>46.9</span><span class="neg">-0.1</span><span class="mute">aria_w</span></div>
+        <div class="tape-row"><span class="mute">14:39:30</span><span>gemini-3-pro · mcp-atlas</span><span>74.1</span><span class="pos">+0.9</span><span class="mute">marcus</span></div>
+        <div class="tape-row"><span class="mute">14:39:12</span><span>llama-4 · gpqa-diamond</span><span>78.2</span><span class="neg">-1.4</span><span class="mute">l_pham</span></div>
+        <div class="tape-row"><span class="mute">14:38:55</span><span>opus-4-7 · swe-bench-verified</span><span>87.6</span><span class="mute">±0.0</span><span class="mute">tnguyen</span></div>
+      </div>
+    </div>
+
+    <!-- ghost stat -->
+    <div class="ghost-stat">87.6</div>
+
+    <!-- gradient + noise -->
+    <div class="blur-mask"></div>
+    <div class="noise"></div>
+
+    <!-- nav -->
+    <nav class="pill">
+      <div class="inner">
+        <a href="#">Tasks</a>
+        <a href="#">Leaderboard</a>
+        <a href="#">Compare</a>
+        <a href="#">Models</a>
+        <a href="#">Pulse</a>
+        <a href="#" style="display:flex;align-items:center;gap:6px"><span class="dot"></span>Live</a>
+        <a href="#">Sign in</a>
+      </div>
+    </nav>
+
+    <!-- top corners -->
+    <div class="corner l">issue 04·26 &nbsp; <span class="v">141 runs today</span></div>
+    <div class="corner r">9 models tracked &nbsp;·&nbsp; updated <span class="v">14:42:08 ICT</span></div>
+
+    <!-- main hero text -->
+    <div class="hero-content">
+      <div class="grid">
+        <div>
+          <h1 class="display">
+            <span class="word-up" style="animation-delay:.05s">Frontier</span><span class="star word-up" style="animation-delay:.4s">*</span>
+          </h1>
+        </div>
+        <div>
+          <p class="pitch word-up" style="animation-delay:.55s">A community tape of every benchmark run, posted by hand, linked to evidence. No vendor PR, no API spend, no synthetic claims — the runs people actually did this week.</p>
+          <button class="cta word-up" style="animation-delay:.7s">
+            Submit a run
+            <span class="arrow-bubble">→</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot word-up" style="animation-delay:.9s">* tape — n. continuous record of trades, scores, and verifications, broadcast as they happen. read top to bottom.</div>
+
+  </div>
+</div>
+
+</body></html>

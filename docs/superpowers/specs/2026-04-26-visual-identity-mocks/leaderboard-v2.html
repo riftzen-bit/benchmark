@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Frontier — leaderboard v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --paper: #0A0A0B; --paper2: #111114; --cream: #E1E0CC; --mute: rgba(225,224,204,.55); --dim: rgba(225,224,204,.18); --rule: rgba(225,224,204,.10); --pos: #5eead4; --neg: #f97171; --hot: #ff5b3a; }
+  body { background: #18181b; font-family: 'Inter', sans-serif; color: var(--cream); }
+  .stage { padding: 16px; }
+  .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; text-transform: uppercase; letter-spacing: .12em; padding: 8px 4px; }
+
+  .page { background: var(--paper); border-radius: 28px; overflow: hidden; position: relative; }
+
+  nav.pill { position: absolute; left: 50%; top: 0; transform: translateX(-50%); z-index: 20; }
+  nav.pill .inner { display: flex; align-items: center; gap: 28px; background: #000; padding: 11px 22px; border-radius: 0 0 22px 22px; }
+  nav.pill a { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: rgba(225,224,204,.7); text-decoration: none; }
+  nav.pill a.active { color: var(--cream); }
+  nav.pill .dot { width: 5px; height: 5px; background: var(--pos); border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+  .corner { position: absolute; top: 18px; z-index: 10; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; }
+  .corner.l { left: 28px; }
+  .corner.r { right: 28px; text-align: right; }
+  .corner .v { color: var(--cream); font-weight: 600; }
+
+  .header-band { padding: 96px 32px 28px; border-bottom: 1px solid var(--rule); }
+  .header-band .row { display: grid; grid-template-columns: 7fr 5fr; gap: 32px; align-items: end; }
+  .h-display { font-weight: 500; font-size: 11vw; letter-spacing: -0.06em; line-height: 0.85; }
+  .h-display .star { font-size: 0.18em; vertical-align: super; margin-left: 0.04em; }
+
+  .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; padding-bottom: 8px; }
+  .stat { padding: 0 18px; border-left: 1px solid var(--rule); }
+  .stat:first-child { border-left: 0; padding-left: 0; }
+  .stat .lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; margin-bottom: 6px; }
+  .stat .val { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 600; line-height: 1; letter-spacing: -.02em; }
+  .stat .sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-top: 4px; }
+
+  .controls { display: flex; gap: 4px; align-items: center; padding: 14px 32px; border-bottom: 1px solid var(--rule); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .seg { display: flex; }
+  .seg button { background: transparent; color: var(--mute); border: 1px solid var(--rule); padding: 6px 14px; font: inherit; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; }
+  .seg button + button { border-left: 0; }
+  .seg button:first-child { border-radius: 999px 0 0 999px; padding-left: 18px; }
+  .seg button:last-child { border-radius: 0 999px 999px 0; padding-right: 18px; }
+  .seg button.on { background: var(--cream); color: var(--paper); border-color: var(--cream); }
+  .controls .gap { width: 18px; }
+  .controls .right { margin-left: auto; color: var(--mute); }
+  .controls .right .v { color: var(--cream); }
+
+  table.lb { width: 100%; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  table.lb thead th { text-align: right; font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--mute); padding: 16px 14px; border-bottom: 1px solid var(--rule); background: var(--paper); }
+  table.lb thead th:first-child, table.lb thead th.l { text-align: left; }
+  table.lb thead th:first-child { padding-left: 32px; }
+  table.lb thead th:last-child { padding-right: 32px; }
+  table.lb td { padding: 12px 14px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: baseline; }
+  table.lb td:first-child { padding-left: 32px; }
+  table.lb td:last-child { padding-right: 32px; }
+  table.lb td.l { text-align: left; }
+  table.lb tr:hover td { background: rgba(225,224,204,.025); }
+  .rank { color: var(--mute); font-size: 11px; width: 56px; }
+  .rank.medal-1 { color: var(--cream); font-weight: 700; }
+  .rank.medal-2 { color: var(--cream); font-weight: 600; opacity: .85; }
+  .rank.medal-3 { color: var(--cream); font-weight: 600; opacity: .7; }
+  .model { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: -.01em; }
+  .vendor { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .12em; margin-left: 8px; }
+  .pos { color: var(--pos); }
+  .neg { color: var(--neg); }
+  .zero { color: var(--mute); }
+  .spark { display: inline-flex; align-items: end; gap: 1px; height: 18px; }
+  .spark span { width: 2px; background: var(--cream); opacity: .55; }
+  .spark.up span:last-child { background: var(--pos); opacity: 1; }
+  .spark.dn span:last-child { background: var(--neg); opacity: 1; }
+  .barcell { display: inline-flex; align-items: center; gap: 8px; }
+  .barcell .bg { width: 110px; height: 6px; background: rgba(225,224,204,.08); position: relative; }
+  .barcell .fill { height: 100%; background: var(--cream); }
+  .barcell .num { font-weight: 600; min-width: 44px; text-align: right; }
+
+  /* Section heading */
+  .sec-head { padding: 38px 32px 14px; display: flex; align-items: end; justify-content: space-between; }
+  .sec-head .l { display: flex; align-items: end; gap: 16px; }
+  .sec-head h2 { font-weight: 500; font-size: 36px; letter-spacing: -.04em; line-height: .9; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; padding-bottom: 8px; }
+  .sec-head a { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; text-decoration: none; padding-bottom: 6px; }
+  .sec-head a:hover { color: var(--cream); }
+
+  /* Live tape */
+  .tape-band { padding: 4px 0 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); background: var(--paper2); position: relative; overflow: hidden; height: 56px; display: flex; align-items: center; }
+  .tape-band::before, .tape-band::after { content: ""; position: absolute; top: 0; bottom: 0; width: 64px; z-index: 2; pointer-events: none; }
+  .tape-band::before { left: 0; background: linear-gradient(90deg, var(--paper2), transparent); }
+  .tape-band::after { right: 0; background: linear-gradient(-90deg, var(--paper2), transparent); }
+  .tape-track { display: flex; gap: 36px; animation: scrollX 60s linear infinite; white-space: nowrap; padding-left: 32px; }
+  @keyframes scrollX { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .tape-item { display: inline-flex; align-items: baseline; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .tape-item .t { color: var(--mute); }
+  .tape-item .m { font-family: 'Inter', sans-serif; font-weight: 600; }
+  .tape-item .s { font-weight: 700; }
+  .tape-item .d { font-size: 11px; }
+
+  /* Movers */
+  .movers-band { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid var(--rule); }
+  .movers-col { padding: 24px 32px 28px; }
+  .movers-col + .movers-col { border-left: 1px solid var(--rule); }
+  .movers-col .ttl { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+  .movers-col .ttl h3 { font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+  .movers-col .ttl span { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; }
+  .mover-row { display: grid; grid-template-columns: 24px 1fr 70px 60px; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--rule); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .mover-row:last-child { border-bottom: 0; }
+  .mover-row .r { color: var(--mute); font-size: 10px; }
+  .mover-row .m { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; }
+  .mover-row .v { color: var(--mute); font-size: 9px; text-transform: uppercase; letter-spacing: .12em; margin-left: 6px; }
+  .mover-row .delta { text-align: right; font-weight: 700; }
+  .mover-row .scr { text-align: right; }
+
+  /* Winners bento */
+  .bento { padding: 8px 24px 32px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .ben { background: var(--paper2); border: 1px solid var(--rule); padding: 18px; min-height: 170px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .ben .cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; }
+  .ben .num { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 56px; line-height: 1; letter-spacing: -.04em; margin: 6px 0 4px; }
+  .ben .winner { font-weight: 600; font-size: 14px; }
+  .ben .winner .ven { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--mute); text-transform: uppercase; letter-spacing: .12em; margin-left: 6px; }
+  .ben .meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-top: 8px; }
+  .ben .spark { position: absolute; right: 14px; top: 14px; opacity: .8; }
+  .ben.hi { background: var(--cream); color: var(--paper); }
+  .ben.hi .cat, .ben.hi .meta { color: rgba(10,10,11,.6); }
+  .ben.hi .spark span { background: rgba(10,10,11,.45); }
+  .ben.hi .spark.up span:last-child { background: var(--paper); opacity: 1; }
+  .ben.hi .winner .ven { color: rgba(10,10,11,.55); }
+
+  /* Footer band */
+  .foot-band { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0; border-top: 1px solid var(--rule); }
+  .foot-band > div { padding: 26px 32px; }
+  .foot-band > div + div { border-left: 1px solid var(--rule); }
+  .foot-band h4 { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; margin-bottom: 12px; }
+  .foot-band p { font-size: 13px; line-height: 1.5; color: var(--mute); }
+  .foot-band p strong { color: var(--cream); font-weight: 500; }
+  .foot-band ul { list-style: none; }
+  .foot-band li { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 5px 0; color: var(--mute); }
+  .foot-band li a { color: var(--cream); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .submit-cta { display: inline-flex; align-items: center; gap: 8px; background: var(--cream); color: var(--paper); padding: 6px 6px 6px 18px; border-radius: 999px; font-weight: 600; font-size: 14px; text-decoration: none; margin-top: 8px; }
+  .submit-cta .ab { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: var(--paper); color: var(--cream); border-radius: 50%; }
+
+  .colophon { padding: 18px 32px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .14em; border-top: 1px solid var(--rule); }
+</style></head>
+<body>
+
+<div class="stage">
+  <div class="label">Frontier · /leaderboard v2 · multi-band, no empty canvas</div>
+
+  <div class="page">
+    <nav class="pill">
+      <div class="inner">
+        <a href="#">Tasks</a>
+        <a href="#" class="active">Leaderboard</a>
+        <a href="#">Compare</a>
+        <a href="#">Models</a>
+        <a href="#">Pulse</a>
+        <a href="#" style="display:flex;align-items:center;gap:6px"><span class="dot"></span>Live</a>
+        <a href="#">Sign in</a>
+      </div>
+    </nav>
+
+    <div class="corner l">issue 04·26 &nbsp; <span class="v">leaderboard</span></div>
+    <div class="corner r">141 runs · 9 models &nbsp;·&nbsp; refreshed <span class="v">2m ago</span></div>
+
+    <!-- BAND 1: header + stats strip -->
+    <div class="header-band">
+      <div class="row">
+        <div>
+          <h1 class="h-display">Tape<span class="star">†</span></h1>
+        </div>
+        <div>
+          <div class="stats-strip">
+            <div class="stat">
+              <div class="lbl">runs · 7d</div>
+              <div class="val">141</div>
+              <div class="sub" style="color:var(--pos)">+38 vs prior</div>
+            </div>
+            <div class="stat">
+              <div class="lbl">models</div>
+              <div class="val">9</div>
+              <div class="sub">2 added this wk</div>
+            </div>
+            <div class="stat">
+              <div class="lbl">tasks</div>
+              <div class="val">22</div>
+              <div class="sub">in catalogue</div>
+            </div>
+            <div class="stat">
+              <div class="lbl">contributors</div>
+              <div class="val">17</div>
+              <div class="sub" style="color:var(--pos)">+4 this wk</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="controls">
+      <div class="seg">
+        <button class="on">All</button>
+        <button>Coding</button>
+        <button>Reasoning</button>
+        <button>Agentic</button>
+        <button>Vision</button>
+      </div>
+      <div class="gap"></div>
+      <div class="seg">
+        <button class="on">7d</button>
+        <button>30d</button>
+        <button>All-time</button>
+      </div>
+      <div class="right">sorted by <span class="v">mean ↓</span> &nbsp;·&nbsp; <span class="v">9</span> models</div>
+    </div>
+
+    <!-- BAND 2: leaderboard -->
+    <table class="lb">
+      <thead>
+        <tr>
+          <th class="l">#</th>
+          <th class="l">Model</th>
+          <th>Coding</th>
+          <th>Reasoning</th>
+          <th>Agentic</th>
+          <th>Vision</th>
+          <th>Mean</th>
+          <th>7d</th>
+          <th>Δ</th>
+          <th>Runs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="l rank medal-1">01</td><td class="l"><span class="model">claude-opus-4-7</span><span class="vendor">anthropic</span></td><td>87.6</td><td>94.2</td><td>77.3</td><td>82.1</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:85.3%"></span></span><span class="num">85.3</span></span></td><td><span class="spark up"><span style="height:8px"></span><span style="height:11px"></span><span style="height:9px"></span><span style="height:13px"></span><span style="height:12px"></span><span style="height:15px"></span><span style="height:18px"></span></span></td><td class="pos">+2.6</td><td>42</td></tr>
+        <tr><td class="l rank medal-2">02</td><td class="l"><span class="model">gpt-5.5</span><span class="vendor">openai</span></td><td>85.0</td><td>93.6</td><td>75.3</td><td>—</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:84.6%"></span></span><span class="num">84.6</span></span></td><td><span class="spark dn"><span style="height:14px"></span><span style="height:13px"></span><span style="height:15px"></span><span style="height:11px"></span><span style="height:12px"></span><span style="height:10px"></span><span style="height:9px"></span></span></td><td class="neg">−1.2</td><td>38</td></tr>
+        <tr><td class="l rank medal-3">03</td><td class="l"><span class="model">gemini-3-pro</span><span class="vendor">google</span></td><td>81.4</td><td>91.0</td><td>74.1</td><td>78.5</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:81.3%"></span></span><span class="num">81.3</span></span></td><td><span class="spark up"><span style="height:10px"></span><span style="height:11px"></span><span style="height:10px"></span><span style="height:12px"></span><span style="height:13px"></span><span style="height:13px"></span><span style="height:14px"></span></span></td><td class="pos">+0.8</td><td>19</td></tr>
+        <tr><td class="l rank">04</td><td class="l"><span class="model">claude-opus-4-6</span><span class="vendor">anthropic</span></td><td>72.5</td><td>83.3</td><td>68.0</td><td>74.0</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:74.4%"></span></span><span class="num">74.4</span></span></td><td><span class="spark"><span style="height:9px"></span><span style="height:9px"></span><span style="height:10px"></span><span style="height:9px"></span><span style="height:9px"></span><span style="height:9px"></span><span style="height:9px"></span></span></td><td class="zero">±0.0</td><td>61</td></tr>
+        <tr><td class="l rank">05</td><td class="l"><span class="model">llama-4-405b</span><span class="vendor">meta</span></td><td>67.0</td><td>78.2</td><td>62.4</td><td>—</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:69.2%"></span></span><span class="num">69.2</span></span></td><td><span class="spark up"><span style="height:6px"></span><span style="height:7px"></span><span style="height:7px"></span><span style="height:8px"></span><span style="height:9px"></span><span style="height:9px"></span><span style="height:11px"></span></span></td><td class="pos">+1.4</td><td>22</td></tr>
+        <tr><td class="l rank">06</td><td class="l"><span class="model">deepseek-v4</span><span class="vendor">deepseek</span></td><td>71.0</td><td>74.4</td><td>59.0</td><td>68.1</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:68.1%"></span></span><span class="num">68.1</span></span></td><td><span class="spark up"><span style="height:5px"></span><span style="height:7px"></span><span style="height:8px"></span><span style="height:8px"></span><span style="height:9px"></span><span style="height:11px"></span><span style="height:12px"></span></span></td><td class="pos">+3.2</td><td>15</td></tr>
+        <tr><td class="l rank">07</td><td class="l"><span class="model">qwen-3-72b</span><span class="vendor">alibaba</span></td><td>64.2</td><td>71.0</td><td>56.0</td><td>62.4</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:63.4%"></span></span><span class="num">63.4</span></span></td><td><span class="spark dn"><span style="height:8px"></span><span style="height:8px"></span><span style="height:7px"></span><span style="height:7px"></span><span style="height:7px"></span><span style="height:6px"></span><span style="height:6px"></span></span></td><td class="neg">−0.4</td><td>11</td></tr>
+        <tr><td class="l rank">08</td><td class="l"><span class="model">mistral-large-3</span><span class="vendor">mistral</span></td><td>59.0</td><td>67.5</td><td>52.1</td><td>—</td><td><span class="barcell"><span class="bg"><span class="fill" style="width:59.5%"></span></span><span class="num">59.5</span></span></td><td><span class="spark"><span style="height:6px"></span><span style="height:6px"></span><span style="height:7px"></span><span style="height:6px"></span><span style="height:6px"></span><span style="height:6px"></span><span style="height:6px"></span></span></td><td class="zero">±0.0</td><td>9</td></tr>
+      </tbody>
+    </table>
+
+    <!-- BAND 3: live tape -->
+    <div class="sec-head">
+      <div class="l">
+        <span class="eyebrow">Live tape · last 30 runs</span>
+        <h2>Right now</h2>
+      </div>
+      <a href="#">Open full tape →</a>
+    </div>
+    <div class="tape-band">
+      <div class="tape-track">
+        <div class="tape-item"><span class="t">14:42:08</span><span class="m">opus-4-7</span><span class="t">·</span><span>swe-bench-pro</span><span class="t">→</span><span class="s">64.3</span><span class="d pos">+0.4</span></div>
+        <div class="tape-item"><span class="t">14:41:55</span><span class="m">gpt-5.5</span><span class="t">·</span><span>terminal-bench-2</span><span class="t">→</span><span class="s">82.7</span><span class="d pos">+1.1</span></div>
+        <div class="tape-item"><span class="t">14:41:32</span><span class="m">gemini-3-pro</span><span class="t">·</span><span>gpqa-diamond</span><span class="t">→</span><span class="s">91.0</span><span class="d neg">−0.6</span></div>
+        <div class="tape-item"><span class="t">14:41:18</span><span class="m">llama-4-405b</span><span class="t">·</span><span>finance-agent</span><span class="t">→</span><span class="s">58.2</span><span class="d pos">+2.0</span></div>
+        <div class="tape-item"><span class="t">14:41:02</span><span class="m">opus-4-7</span><span class="t">·</span><span>mmmlu</span><span class="t">→</span><span class="s">91.5</span></div>
+        <div class="tape-item"><span class="t">14:40:48</span><span class="m">gpt-5.5</span><span class="t">·</span><span>browsecomp</span><span class="t">→</span><span class="s">84.4</span><span class="d neg">−0.2</span></div>
+        <div class="tape-item"><span class="t">14:40:33</span><span class="m">opus-4-7</span><span class="t">·</span><span>finance-agent</span><span class="t">→</span><span class="s">64.4</span><span class="d pos">+1.8</span></div>
+        <div class="tape-item"><span class="t">14:40:11</span><span class="m">gpt-5.5</span><span class="t">·</span><span>cybergym</span><span class="t">→</span><span class="s">81.8</span><span class="d pos">+0.3</span></div>
+        <div class="tape-item"><span class="t">14:39:54</span><span class="m">opus-4-7</span><span class="t">·</span><span>hle</span><span class="t">→</span><span class="s">46.9</span></div>
+        <div class="tape-item"><span class="t">14:39:30</span><span class="m">gemini-3-pro</span><span class="t">·</span><span>mcp-atlas</span><span class="t">→</span><span class="s">74.1</span><span class="d pos">+0.9</span></div>
+        <!-- duplicate -->
+        <div class="tape-item"><span class="t">14:42:08</span><span class="m">opus-4-7</span><span class="t">·</span><span>swe-bench-pro</span><span class="t">→</span><span class="s">64.3</span><span class="d pos">+0.4</span></div>
+        <div class="tape-item"><span class="t">14:41:55</span><span class="m">gpt-5.5</span><span class="t">·</span><span>terminal-bench-2</span><span class="t">→</span><span class="s">82.7</span><span class="d pos">+1.1</span></div>
+        <div class="tape-item"><span class="t">14:41:32</span><span class="m">gemini-3-pro</span><span class="t">·</span><span>gpqa-diamond</span><span class="t">→</span><span class="s">91.0</span><span class="d neg">−0.6</span></div>
+        <div class="tape-item"><span class="t">14:41:18</span><span class="m">llama-4-405b</span><span class="t">·</span><span>finance-agent</span><span class="t">→</span><span class="s">58.2</span><span class="d pos">+2.0</span></div>
+        <div class="tape-item"><span class="t">14:41:02</span><span class="m">opus-4-7</span><span class="t">·</span><span>mmmlu</span><span class="t">→</span><span class="s">91.5</span></div>
+        <div class="tape-item"><span class="t">14:40:48</span><span class="m">gpt-5.5</span><span class="t">·</span><span>browsecomp</span><span class="t">→</span><span class="s">84.4</span><span class="d neg">−0.2</span></div>
+        <div class="tape-item"><span class="t">14:40:33</span><span class="m">opus-4-7</span><span class="t">·</span><span>finance-agent</span><span class="t">→</span><span class="s">64.4</span><span class="d pos">+1.8</span></div>
+        <div class="tape-item"><span class="t">14:40:11</span><span class="m">gpt-5.5</span><span class="t">·</span><span>cybergym</span><span class="t">→</span><span class="s">81.8</span><span class="d pos">+0.3</span></div>
+        <div class="tape-item"><span class="t">14:39:54</span><span class="m">opus-4-7</span><span class="t">·</span><span>hle</span><span class="t">→</span><span class="s">46.9</span></div>
+        <div class="tape-item"><span class="t">14:39:30</span><span class="m">gemini-3-pro</span><span class="t">·</span><span>mcp-atlas</span><span class="t">→</span><span class="s">74.1</span><span class="d pos">+0.9</span></div>
+      </div>
+    </div>
+
+    <!-- BAND 4: movers -->
+    <div class="sec-head">
+      <div class="l">
+        <span class="eyebrow">7-day movers · mean delta</span>
+        <h2>Up &amp; down</h2>
+      </div>
+      <a href="#">Why moves happen →</a>
+    </div>
+    <div class="movers-band">
+      <div class="movers-col">
+        <div class="ttl"><h3>Climbing</h3><span>top 4</span></div>
+        <div class="mover-row"><span class="r">01</span><span><span class="m">deepseek-v4</span><span class="v">deepseek</span></span><span class="scr">68.1</span><span class="delta pos">+3.2</span></div>
+        <div class="mover-row"><span class="r">02</span><span><span class="m">opus-4-7</span><span class="v">anthropic</span></span><span class="scr">85.3</span><span class="delta pos">+2.6</span></div>
+        <div class="mover-row"><span class="r">03</span><span><span class="m">llama-4-405b</span><span class="v">meta</span></span><span class="scr">69.2</span><span class="delta pos">+1.4</span></div>
+        <div class="mover-row"><span class="r">04</span><span><span class="m">gemini-3-pro</span><span class="v">google</span></span><span class="scr">81.3</span><span class="delta pos">+0.8</span></div>
+      </div>
+      <div class="movers-col">
+        <div class="ttl"><h3>Falling</h3><span>bottom 4</span></div>
+        <div class="mover-row"><span class="r">01</span><span><span class="m">gpt-5.5</span><span class="v">openai</span></span><span class="scr">84.6</span><span class="delta neg">−1.2</span></div>
+        <div class="mover-row"><span class="r">02</span><span><span class="m">qwen-3-72b</span><span class="v">alibaba</span></span><span class="scr">63.4</span><span class="delta neg">−0.4</span></div>
+        <div class="mover-row"><span class="r">03</span><span><span class="m">opus-4-6</span><span class="v">anthropic</span></span><span class="scr">74.4</span><span class="delta zero">±0.0</span></div>
+        <div class="mover-row"><span class="r">04</span><span><span class="m">mistral-large-3</span><span class="v">mistral</span></span><span class="scr">59.5</span><span class="delta zero">±0.0</span></div>
+      </div>
+    </div>
+
+    <!-- BAND 5: winners by category bento -->
+    <div class="sec-head">
+      <div class="l">
+        <span class="eyebrow">Category leaders · 7d</span>
+        <h2>Who wins what</h2>
+      </div>
+      <a href="#">All categories →</a>
+    </div>
+    <div class="bento">
+      <div class="ben hi">
+        <div>
+          <div class="cat">Coding</div>
+          <div class="num">87.6</div>
+          <div class="winner">claude-opus-4-7<span class="ven">anthropic</span></div>
+        </div>
+        <div class="meta">42 runs · swe-bench-verified mean</div>
+        <div class="spark up"><span style="height:6px"></span><span style="height:8px"></span><span style="height:9px"></span><span style="height:11px"></span><span style="height:13px"></span></div>
+      </div>
+      <div class="ben">
+        <div>
+          <div class="cat">Reasoning</div>
+          <div class="num">94.2</div>
+          <div class="winner">claude-opus-4-7<span class="ven">anthropic</span></div>
+        </div>
+        <div class="meta">38 runs · gpqa-diamond mean</div>
+        <div class="spark up"><span style="height:9px"></span><span style="height:10px"></span><span style="height:11px"></span><span style="height:12px"></span><span style="height:13px"></span></div>
+      </div>
+      <div class="ben">
+        <div>
+          <div class="cat">Agentic</div>
+          <div class="num">82.7</div>
+          <div class="winner">gpt-5.5<span class="ven">openai</span></div>
+        </div>
+        <div class="meta">25 runs · terminal-bench-2 mean</div>
+        <div class="spark up"><span style="height:8px"></span><span style="height:8px"></span><span style="height:9px"></span><span style="height:11px"></span><span style="height:14px"></span></div>
+      </div>
+      <div class="ben">
+        <div>
+          <div class="cat">Vision</div>
+          <div class="num">82.1</div>
+          <div class="winner">claude-opus-4-7<span class="ven">anthropic</span></div>
+        </div>
+        <div class="meta">14 runs · charxiv mean</div>
+        <div class="spark"><span style="height:9px"></span><span style="height:10px"></span><span style="height:9px"></span><span style="height:10px"></span><span style="height:10px"></span></div>
+      </div>
+    </div>
+
+    <!-- BAND 6: footer / methodology / submit -->
+    <div class="foot-band">
+      <div>
+        <h4>How this board works</h4>
+        <p><strong>Mean</strong> is the arithmetic mean of one model's scores across the four categories above, weighted equally. Models with under 5 runs in a category show <strong>—</strong>. Vendor-published numbers (e.g. release-day claims) live on <a href="#" style="color:var(--cream);border-bottom:1px solid var(--rule)">/vendors</a> and never enter this board. <strong>All scores here come from runs a real human posted with linked evidence.</strong></p>
+      </div>
+      <div>
+        <h4>Source pipelines (cross-board)</h4>
+        <ul>
+          <li><a href="#">LMSYS Arena ↗</a></li>
+          <li><a href="#">HF Open-LLM v2 ↗</a></li>
+          <li><a href="#">LiveBench ↗</a></li>
+          <li><a href="#">Frontier Tape (this) →</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Add to the tape</h4>
+        <p>Pick a task, run it, screenshot or share a link, post the score. 5 min flat.</p>
+        <a class="submit-cta" href="#">Submit a run <span class="ab">→</span></a>
+      </div>
+    </div>
+
+    <div class="colophon">
+      <span>frontier · tape edition · 04·26 · ICT</span>
+      <span>© 2026 community · code on github →</span>
+    </div>
+
+  </div>
+</div>
+
+</body></html>
