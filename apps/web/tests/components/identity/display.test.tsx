@@ -5,7 +5,7 @@ import { Display } from "@/components/ui/identity/display";
 describe("Display", () => {
   it("renders one span per word", () => {
     const { container } = render(<Display level="lg">Tape board live</Display>);
-    const spans = container.querySelectorAll(":scope > span > span.word-up");
+    const spans = container.querySelectorAll("h1 > span > span.word-up");
     expect(spans).toHaveLength(3);
   });
 
