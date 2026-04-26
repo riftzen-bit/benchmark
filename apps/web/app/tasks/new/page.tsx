@@ -18,9 +18,13 @@ type Search = Promise<{
 }>;
 
 export default async function NewTaskPage({ searchParams }: { searchParams: Search }) {
-  const user = await getUser();
-  if (!user) redirect("/sign-in?next=/tasks/new");
   const sp = await searchParams;
+  const user = await getUser();
+  if (!user) {
+    const qs = new URLSearchParams(sp as Record<string, string>).toString();
+    const next = `/tasks/new${qs ? `?${qs}` : ""}`;
+    redirect(`/sign-in?next=${encodeURIComponent(next)}`);
+  }
   const [categories, recent] = await Promise.all([
     listCategories(),
     listPublicTasks({ limit: 3 }).catch(() => []),
