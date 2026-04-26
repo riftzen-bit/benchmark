@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { fmtDelta } from "@/lib/format";
 
 export type TapeItem = {
   time: string;
@@ -13,12 +14,6 @@ function deltaState(d?: number): "pos" | "neg" | "zero" | undefined {
   if (d > 0) return "pos";
   if (d < 0) return "neg";
   return "zero";
-}
-
-function fmtDelta(d?: number) {
-  if (d === undefined) return "";
-  if (d === 0) return "±0.0";
-  return `${d > 0 ? "+" : ""}${d.toFixed(1)}`;
 }
 
 export function TapeBand({ items, durationSec = 60 }: { items: TapeItem[]; durationSec?: number }) {
@@ -50,7 +45,7 @@ export function TapeBand({ items, durationSec = 60 }: { items: TapeItem[]; durat
                     ds === "pos" ? "text-[var(--pos)]" : ds === "neg" ? "text-[var(--neg)]" : "text-[var(--cream-mute)]",
                   )}
                 >
-                  {fmtDelta(it.delta)}
+                  {fmtDelta(it.delta!)}
                 </span>
               )}
             </span>

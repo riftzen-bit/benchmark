@@ -1,11 +1,7 @@
 import { cn } from "@/lib/utils";
+import { fmtDelta } from "@/lib/format";
 
 export type MoverRow = { model: string; vendor: string; score: number; delta: number };
-
-function fmt(d: number) {
-  if (d === 0) return "±0.0";
-  return `${d > 0 ? "+" : ""}${d.toFixed(1)}`;
-}
 
 function Col({ title, subtitle, rows }: { title: string; subtitle: string; rows: MoverRow[] }) {
   return (
@@ -27,7 +23,7 @@ function Col({ title, subtitle, rows }: { title: string; subtitle: string; rows:
               <span className="ml-1.5 text-[9px] uppercase tracking-[0.12em] text-[var(--cream-mute)]">{r.vendor}</span>
             </span>
             <span className="text-right">{r.score.toFixed(1)}</span>
-            <span className={cn("text-right font-bold", tone)}>{fmt(r.delta)}</span>
+            <span className={cn("text-right font-bold", tone)}>{fmtDelta(r.delta)}</span>
           </div>
         );
       })}
