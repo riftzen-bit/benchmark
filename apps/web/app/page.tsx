@@ -12,15 +12,18 @@ import { listPublicTasks } from "@/lib/db/queries/tasks";
 import { listLeaderboard } from "@/lib/db/queries/leaderboard";
 import { fetchTrendingHFModels } from "@/lib/data/external/huggingface";
 import { TrendingModels } from "@/components/home/trending-models";
+import { loadLeaderboardSnapshot } from "@/lib/data/external/leaderboards";
+import { LiveRanks } from "@/components/home/live-ranks";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [tasks, leaderboard, trending] = await Promise.all([
+  const [tasks, leaderboard, trending, snap] = await Promise.all([
     listPublicTasks({ limit: 6 }).catch(() => []),
     listLeaderboard().catch(() => []),
     fetchTrendingHFModels({ limit: 8 }),
+    loadLeaderboardSnapshot(),
   ]);
 
   return (
@@ -60,6 +63,24 @@ export default async function HomePage() {
           </Link>
         </header>
         <HeadlineGrid />
+      </Container>
+
+      <Container width="wide" className="pb-16 md:pb-20">
+        <header className="mb-6 flex items-baseline justify-between gap-4">
+          <div>
+            <Eyebrow>Live ranks · refreshes every 30 min</Eyebrow>
+            <h2 className="display mt-3 text-3xl tracking-tight md:text-4xl">
+              Three boards. Top five.
+            </h2>
+          </div>
+          <Link
+            href="/leaderboard"
+            className="mono shrink-0 text-xs uppercase tracking-widest text-[var(--mute)] underline decoration-[var(--rule)] underline-offset-4 hover:decoration-[var(--accent)]"
+          >
+            All boards →
+          </Link>
+        </header>
+        <LiveRanks snap={snap} />
       </Container>
 
       <Container width="wide" className="pb-16 md:pb-20">

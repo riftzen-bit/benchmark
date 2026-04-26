@@ -77,15 +77,17 @@
   --tie: #888888;
 }
 
-* { border-color: var(--rule); }
+@layer base {
+  * { border-color: var(--rule); }
 
-html, body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  html, body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
 }
 
 .tnum, table, .num {
