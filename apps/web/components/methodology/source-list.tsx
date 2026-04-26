@@ -1,4 +1,3 @@
-import { ExternalLink } from "lucide-react";
 import { SOURCES } from "@/lib/data/sources";
 import { Eyebrow } from "@/components/shared/eyebrow";
 
@@ -20,10 +19,10 @@ export function SourceList() {
               </span>
               <Eyebrow>Captured {source.capturedAt}</Eyebrow>
             </div>
-            <ExternalLink
-              className="ml-4 h-4 w-4 shrink-0 text-[var(--mute)] transition-colors group-hover:text-[var(--accent)]"
+            <span
               aria-hidden
-            />
+              className="ml-4 shrink-0 text-base leading-none text-[var(--mute)] transition-colors group-hover:text-[var(--accent)]"
+            >↗</span>
           </a>
         </li>
       ))}

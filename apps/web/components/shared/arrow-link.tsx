@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -21,12 +20,11 @@ const STYLES = {
 
 export function ArrowLink({ href, children, variant = "primary", external, className }: Props) {
   const Cmp = external ? "a" : Link;
-  const Icon = external ? ArrowUpRight : ArrowRight;
   const extra = external ? { target: "_blank", rel: "noopener noreferrer" } : {};
   return (
     <Cmp href={href} className={cn(STYLES[variant], className)} {...extra}>
       <span>{children}</span>
-      <Icon className="h-4 w-4" aria-hidden />
+      <span aria-hidden className="text-[1em] leading-none">{external ? "↗" : "→"}</span>
     </Cmp>
   );
 }

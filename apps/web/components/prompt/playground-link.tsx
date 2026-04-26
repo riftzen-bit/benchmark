@@ -1,4 +1,3 @@
-import { ExternalLink } from "lucide-react";
 import type { Playground } from "@/lib/schema/prompt";
 import { ModelDot } from "@/components/shared/model-mark";
 
@@ -25,7 +24,7 @@ export function PlaygroundLink({ p }: { p: Playground }) {
       {showOpus && <ModelDot model="opus" />}
       {showGpt && <ModelDot model="gpt" />}
       <span className="font-medium">{p.label}</span>
-      <ExternalLink className="h-3.5 w-3.5 text-[var(--mute)] group-hover:text-[var(--foreground)]" />
+      <span aria-hidden className="text-[12px] leading-none text-[var(--mute)] group-hover:text-[var(--foreground)]">↗</span>
       <span
         className={`mono text-[10px] uppercase tracking-widest ${
           p.cost === "free-no-account" ? "text-[var(--accent)]" : "text-[var(--mute)]"

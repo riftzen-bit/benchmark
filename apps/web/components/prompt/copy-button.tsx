@@ -1,5 +1,4 @@
 "use client";
-import { Check, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
@@ -31,7 +30,7 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
       className="inline-flex items-center gap-2 border border-[var(--foreground)] bg-[var(--foreground)] px-4 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:bg-transparent hover:text-[var(--foreground)]"
       aria-label={copied ? "Copied to clipboard" : label}
     >
-      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      <span aria-hidden className="text-[1em] leading-none">{copied ? "✓" : "⧉"}</span>
       {copied ? "Copied" : label}
     </button>
   );
