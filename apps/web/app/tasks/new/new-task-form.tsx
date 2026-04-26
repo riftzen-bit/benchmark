@@ -4,7 +4,21 @@ import { createTaskAction } from "../actions";
 
 type Cat = { id: string; label: string };
 
-export function NewTaskForm({ categories }: { categories: Cat[] }) {
+export interface NewTaskDefaults {
+  slug?: string;
+  title?: string;
+  category?: string;
+  body?: string;
+  rubric?: string;
+}
+
+export function NewTaskForm({
+  categories,
+  defaults = {},
+}: {
+  categories: Cat[];
+  defaults?: NewTaskDefaults;
+}) {
   const [state, action, pending] = useActionState(createTaskAction, null);
   return (
     <form action={action} className="grid gap-4">
@@ -17,6 +31,7 @@ export function NewTaskForm({ categories }: { categories: Cat[] }) {
           maxLength={64}
           pattern="[a-z0-9][a-z0-9-]*[a-z0-9]"
           placeholder="long-context-needle"
+          defaultValue={defaults.slug ?? ""}
           className="mono border border-[var(--rule)] bg-transparent px-2 py-1.5"
         />
       </label>
@@ -27,6 +42,7 @@ export function NewTaskForm({ categories }: { categories: Cat[] }) {
           required
           minLength={3}
           maxLength={120}
+          defaultValue={defaults.title ?? ""}
           className="border border-[var(--rule)] bg-transparent px-2 py-1.5"
         />
       </label>
@@ -35,6 +51,7 @@ export function NewTaskForm({ categories }: { categories: Cat[] }) {
         <select
           name="category"
           required
+          defaultValue={defaults.category ?? ""}
           className="border border-[var(--rule)] bg-transparent px-2 py-1.5"
         >
           {categories.map((c) => (
@@ -63,6 +80,7 @@ export function NewTaskForm({ categories }: { categories: Cat[] }) {
           minLength={10}
           maxLength={20000}
           rows={10}
+          defaultValue={defaults.body ?? ""}
           className="mono border border-[var(--rule)] bg-transparent px-2 py-1.5 text-sm"
         />
       </label>
@@ -72,6 +90,7 @@ export function NewTaskForm({ categories }: { categories: Cat[] }) {
           name="rubric_md"
           maxLength={10000}
           rows={5}
+          defaultValue={defaults.rubric ?? ""}
           className="border border-[var(--rule)] bg-transparent px-2 py-1.5 text-sm"
         />
       </label>
