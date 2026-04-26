@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export type NavItem = { href: string; label: string };
 
@@ -25,10 +26,10 @@ export function NavPill({
             <Link
               key={it.href}
               href={it.href}
-              className={
-                "mono text-[11px] uppercase tracking-[0.14em] transition-colors " +
-                (isActive ? "text-[var(--cream)]" : "text-[var(--cream-mute)] hover:text-[var(--cream)]")
-              }
+              className={cn(
+                "mono text-[11px] uppercase tracking-[0.14em] transition-colors",
+                isActive ? "text-[var(--cream)]" : "text-[var(--cream-mute)] hover:text-[var(--cream)]",
+              )}
             >
               {it.label}
             </Link>

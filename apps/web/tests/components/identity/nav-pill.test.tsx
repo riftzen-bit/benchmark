@@ -39,7 +39,7 @@ describe("NavPill", () => {
     expect(screen.getByRole("link", { name: /sign in/i })).toBeInTheDocument();
   });
 
-  it("renders the username (truncated) when signedInAs is provided", () => {
+  it("renders the username when signedInAs is provided", () => {
     render(<NavPill items={items} active="/" signedInAs="aria_w" />);
     expect(screen.getByText("aria_w")).toBeInTheDocument();
   });
