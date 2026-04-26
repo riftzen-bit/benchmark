@@ -21,6 +21,8 @@
 }
 
 :root {
+  color-scheme: dark;
+
   --paper: #0A0A0B;
   --paper-2: #111114;
   --cream: #E1E0CC;
