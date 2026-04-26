@@ -40,10 +40,9 @@ jobs:
         run: |
           set -eux
           rm -f middleware.ts
-          rm -rf app/api app/auth app/profile 'app/(auth)'
-          rm -rf app/tasks/new 'app/tasks/[slug]'
-          rm -f app/tasks/actions.ts
+          rm -rf app/api app/auth app/profile 'app/(auth)' app/compare app/tasks
           rm -f lib/auth/actions.ts
+          rm -rf components/auth
 
       - name: Stub server clients (cookieless anon, read-only)
         working-directory: apps/web
