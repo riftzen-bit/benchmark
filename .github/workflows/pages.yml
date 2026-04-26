@@ -1,0 +1,119 @@
+name: Deploy static snapshot to GitHub Pages
+
+# Builds a read-only static export of the Next.js app.
+# Server-only routes (middleware, API, auth callbacks, server actions, dynamic [slug] routes)
+# are stripped in-CI before the build. The deployed site is a snapshot, not the live SSR app.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Strip server-only routes
+        working-directory: apps/web
+        run: |
+          set -eux
+          rm -f middleware.ts
+          rm -rf app/api app/auth app/profile
+          rm -rf app/tasks/new 'app/tasks/[slug]'
+          rm -f app/tasks/actions.ts
+
+      - name: Stub server clients (cookieless anon, read-only)
+        working-directory: apps/web
+        run: |
+          cat > lib/supabase/server.ts <<'EOF'
+          import { createClient } from "@supabase/supabase-js";
+          import type { Database } from "@/lib/db/types";
+
+          export async function getSupabaseServer() {
+            const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://stub.invalid";
+            const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "stub";
+            return createClient<Database>(url, key, { auth: { persistSession: false } });
+          }
+          EOF
+          cat > lib/auth/session.ts <<'EOF'
+          export async function getUser() { return null; }
+          export async function requireUser(): Promise<never> {
+            throw new Error("UNAUTHENTICATED");
+          }
+          EOF
+
+      - name: Drop force-dynamic / revalidate exports
+        working-directory: apps/web
+        run: |
+          find app -name "page.tsx" -print0 | xargs -0 sed -i \
+            -e '/^export const dynamic = .*$/d' \
+            -e '/^export const revalidate = .*$/d'
+
+      - name: Patch next.config.ts for static export
+        working-directory: apps/web
+        run: |
+          cat > next.config.ts <<'EOF'
+          import type { NextConfig } from "next";
+          import path from "node:path";
+
+          const repo = "benchmark";
+          const isCI = process.env.GITHUB_ACTIONS === "true";
+
+          const nextConfig: NextConfig = {
+            output: "export",
+            trailingSlash: true,
+            images: { unoptimized: true },
+            basePath: isCI ? `/${repo}` : "",
+            assetPrefix: isCI ? `/${repo}/` : "",
+            outputFileTracingRoot: path.join(__dirname, "../../"),
+            eslint: { ignoreDuringBuilds: true },
+            typescript: { ignoreBuildErrors: true },
+          };
+          export default nextConfig;
+          EOF
+
+      - name: Install deps
+        run: bun install
+
+      - name: Build static export
+        run: bun --filter @benchmark/web build
+
+      - name: Add .nojekyll
+        run: touch apps/web/out/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
