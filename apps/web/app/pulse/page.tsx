@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Container } from "@/components/shared/container";
 import { Eyebrow } from "@/components/shared/eyebrow";
@@ -43,10 +44,12 @@ export default async function PulsePage() {
       <Rule weight="hair" className="my-8" />
 
       <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-        <section className="grid gap-4">
-          <PulseFilters vendors={vendors} />
-          <PulseTable models={snap.models} />
-        </section>
+        <Suspense fallback={null}>
+          <section className="grid gap-4">
+            <PulseFilters vendors={vendors} />
+            <PulseTable models={snap.models} />
+          </section>
+        </Suspense>
 
         <aside className="grid gap-4">
           <header>
