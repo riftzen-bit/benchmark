@@ -66,7 +66,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
           <ExternalBoard
             basePath="/leaderboard"
             primaryLabel="Arena ELO"
-            primaryFormat={(n) => Math.round(n).toString()}
+            primaryFormat="round"
             rows={snap.arena.map<BoardRow>((e) => ({
               rank: e.rank,
               modelId: e.model,

@@ -12,10 +12,12 @@ export interface BoardRow {
   meta?: string | null;
 }
 
+type PrimaryFormat = "round" | "fixed1";
+
 interface Props {
   rows: ReadonlyArray<BoardRow>;
   primaryLabel: string;
-  primaryFormat?: (n: number) => string;
+  primaryFormat?: PrimaryFormat;
   basePath: string;
 }
 
@@ -44,7 +46,8 @@ export function ExternalBoard({ rows, primaryLabel, primaryFormat, basePath }: P
   };
 
   const cols = sorted[0]?.secondary ?? [];
-  const fmt = primaryFormat ?? ((n: number) => n.toFixed(1));
+  const fmt = (n: number) =>
+    primaryFormat === "round" ? Math.round(n).toString() : n.toFixed(1);
 
   return (
     <div className="overflow-x-auto border-y border-[var(--rule)]">
