@@ -67,13 +67,13 @@ export default async function LeaderboardPage() {
       key: "spark",
       header: "7d",
       align: "right",
-      render: () => <Sparkline values={[3, 4, 4, 5, 6, 7, 8]} trend="up" />,
+      render: () => <Sparkline values={[5, 5, 5, 5, 5, 5, 5]} trend="flat" />,
     },
     {
       key: "delta",
       header: "Δ",
       align: "right",
-      render: () => <span className="text-[var(--cream-mute)]">±0.0</span>,
+      render: () => <span className="text-[var(--cream-mute)]">—</span>,
     },
     {
       key: "runs",
@@ -93,8 +93,7 @@ export default async function LeaderboardPage() {
         <span className="font-semibold text-[var(--cream)]">leaderboard</span>
       </CornerStats>
       <CornerStats slot="right">
-        {totalRuns} runs · {rows.length} models &nbsp;·&nbsp;{" "}
-        <span className="font-semibold text-[var(--cream)]">refreshed 2m ago</span>
+        {totalRuns} runs · {rows.length} models
       </CornerStats>
 
       {/* HEADER BAND */}
@@ -108,10 +107,10 @@ export default async function LeaderboardPage() {
           <div className="pb-2">
             <StatStrip
               stats={[
-                { label: "runs · 7d", value: String(totalRuns), sub: "+38 vs prior", subTone: "pos" },
-                { label: "models", value: String(rows.length), sub: "2 added this wk" },
-                { label: "tasks", value: "22", sub: "in catalogue" },
-                { label: "contributors", value: "17", sub: "+4 this wk", subTone: "pos" },
+                { label: "runs · 7d", value: String(totalRuns) },
+                { label: "models", value: String(rows.length) },
+                { label: "tasks", value: "—" },
+                { label: "contributors", value: "—" },
               ]}
             />
           </div>
@@ -183,6 +182,7 @@ export default async function LeaderboardPage() {
           </div>
         </div>
       </div>
+      {/* TODO: per-category leader query — currently uses overall-top as a placeholder proxy. */}
       <BentoGrid
         cells={[
           {
@@ -247,25 +247,25 @@ export default async function LeaderboardPage() {
             </h4>
             <ul className="space-y-1.5">
               <li>
-                <a className="mono text-[11px] text-[var(--cream)]" href="/leaderboard?board=arena">
+                <Link className="mono text-[11px] text-[var(--cream)]" href="/leaderboard?board=arena">
                   LMSYS Arena ↗
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   className="mono text-[11px] text-[var(--cream)]"
                   href="/leaderboard?board=open-llm"
                 >
                   HF Open-LLM v2 ↗
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   className="mono text-[11px] text-[var(--cream)]"
                   href="/leaderboard?board=livebench"
                 >
                   LiveBench ↗
-                </a>
+                </Link>
               </li>
             </ul>
           </>
